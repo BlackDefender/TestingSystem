@@ -15,8 +15,8 @@ class CategoriesController extends Controller
 
     public function actionIndex()
     {
-        $post = Yii::$app->db->createCommand('SELECT * FROM categories')->queryAll();
-        return json_encode($post);
+        $list = Yii::$app->db->createCommand('SELECT * FROM categories')->queryAll();
+        return json_encode($list);
     }
 
     public function actionAdd($name = 'NO_NAME_ERROR'){
@@ -33,7 +33,7 @@ class CategoriesController extends Controller
     }
 
     public function actionRename($id = -1, $new_name = 'NO_NAME_ERROR'){
-        if($id <= 0 || $new_name == 'NO_NAME_ERROR') return;
+        if($id <= 0 || $new_name == 'NO_NAME_ERROR') return '__ERROR';
         return Yii::$app->db->createCommand()->update('categories', ['name' => $new_name],['id'=>  intval($id)])->execute();
     }
 
