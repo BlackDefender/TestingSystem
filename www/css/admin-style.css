@@ -1,0 +1,57 @@
+
+body {
+    padding:20px;
+}
+
+.button {
+    border:2px solid black;
+    padding:3px;
+    border-radius:6px;
+}
+
+.toolbar {
+
+}
+
+.toolbar li {
+    list-style:none;
+    display:inline;
+    margin-left:20px;
+    cursor:pointer;
+}
+
+.add {
+
+}
+
+.edit {
+
+}
+
+.copy {
+
+}
+
+.remove {
+
+}
+
+.work-space {
+    background-color: grey;
+    width:800px;
+    min-height:100px;
+}
+
+#qType {
+    display:none;
+}
+
+#img-list {
+   height:100px;
+}
+
+.thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+  }

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset=utf-8 />
+        <title>API карт 2ГИС</title>
+        <style type="text/css">
+            *{
+                box-sizing: border-box;
+            }
+            #map{
+                float: left;
+                width:60%;
+                height:600px;
+            }
+            #points{
+                float: right;
+                width:40%;
+                height:600px;
+                padding: 0 0 0 20px;
+            }
+            .favorite-point{
+                background-color: #FF0;
+            }
+
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+        <script type="text/javascript">
+        jQuery(function($){
+            var addToList = false;
+            var geoPoints = [];
+            function getCounter(){
+                var i=0;
+                return function(){
+                    return i++;
+                };
+            }
+            var counter  = getCounter();
+            var favoriteIcon, usualIcon, hoverIcon;
+            var map;
+
+            navigator.geolocation.getCurrentPosition(showMap, errorMap);
+
+            function showMap(position){
+                DG.then(function () {
+                    map = DG.map('map', {
+                        center: [position.coords.latitude, position.coords.longitude],
+                        zoom: 13
+                    });
+                    favoriteIcon = DG.icon({
+                        iconUrl: 'img/favorite-point.png',
+                        iconSize: [35, 21],
+                        iconAnchor: [17, 10],
+                        popupAnchor: [17, 10]
+                    });
+                    usualIcon = DG.icon({
+                        iconUrl: 'img/usual-point.png',
+                        iconSize: [35, 21],
+                        iconAnchor: [17, 10],
+                        popupAnchor: [17, 10]
+                    });
+                    hoverIcon = DG.icon({
+                        iconUrl: 'img/hover-point.png',
+                        iconSize: [35, 21],
+                        iconAnchor: [17, 10],
+                        popupAnchor: [17, 10]
+                    });
+
+                    loadPoints();
+                    
+                    map.addEventListener('click', function(e) {
+                        if(addToList){
+                            var newPointName = $('#new-point-name').val();
+                            if(newPointName === ''){
+                                addToList = false;
+                                return;
+                            }
+                            addPoint(newPointName, e.latlng, false);
+                            addToList = false;
+                            $('#new-point-name').val('');
+                            savePoints();
+                        }
+                    });
+                });
+            }
+            function errorMap(position){
+                console.log(position);
+            }
+
+            function addPoint(newPointName, latlng, isFavorite){
+                var pointNumber = counter();
+                geoPoints['point_'+pointNumber] = DG.marker([latlng.lat, latlng.lng], {icon: usualIcon}).addTo(map).bindPopup(newPointName);
+
+                var $newPoint = $('  <tr data-id="point_'+pointNumber+'" '+(isFavorite ? 'class="favorite-point"' : '')+'>\n\
+                                        <td class="point-name">'+newPointName+'</td>\n\
+                                        <td><input class="add-point-to-favorites" type="button" value="В избранное"></td>\n\
+                                        <td><input class="delete-point" type="button" value="Удалить"></td>\n\
+                                    </tr>');
+                $newPoint.hover(function(){
+                    geoPoints[$(this).attr('data-id')].setIcon(hoverIcon);
+                },function(){
+                    if($(this).hasClass('favorite-point'))
+                        geoPoints[$(this).attr('data-id')].setIcon(favoriteIcon);
+                    else
+                        geoPoints[$(this).attr('data-id')].setIcon(usualIcon);
+
+                });
+                $('#points-list').append($newPoint);
+            }
+            $('#add-point').bind('click', function(){
+                if($('#new-point-name').val() === '') {
+                    addToList = false;
+                    return;
+                } else{
+                    addToList = true;
+                }
+            });
+            $('#points-list').bind('click', function(e){
+                if($(e.target).hasClass('add-point-to-favorites')){
+                    geoPoints[$(e.target).parents('tr').attr('data-id')].setIcon(favoriteIcon);
+                    $(e.target).parents('tr').addClass('favorite-point');
+                }
+                if($(e.target).hasClass('delete-point')){
+                    geoPoints[$(e.target).parents('tr').attr('data-id')].remove();
+                    $(e.target).parents('tr').remove();
+                }
+            });
+
+
+
+            function loadPoints(){
+                var dataJSON = localStorage.getItem('geoPoints');
+                var data = JSON.parse(dataJSON);
+                data.forEach(function(point){
+                    addPoint(point['name'], point['latlng'], point['isFavorite']);
+                });
+            }
+            function savePoints(){
+                var data = [];
+                $('#points-list tr').each(function(){
+                    var latlng = geoPoints[$(this).attr('data-id')].getLatLng();
+                    var name = $(this).find('.point-name').text();
+                    var isFavorite = $(this).hasClass('favorite-point');
+                    data.push({'name':name, 'latlng':latlng, 'isFavorite':isFavorite});
+                });
+                var dataJSON = JSON.stringify(data);
+                localStorage.setItem('geoPoints', dataJSON);
+                console.log(dataJSON);
+            }
+        });
+
+        </script>
+
+    </head>
+    <body>
+        <div id="map"></div>
+        <aside id="points">
+            <input type="text" id="new-point-name" placeholder="Название метки">
+            <input type="button" id="add-point" value="Добавить">
+            <table id="points-list"></table>
+        </aside>
+    </body>
+</html>

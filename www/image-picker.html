@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image picker</title>
+    <link rel="stylesheet" type="text/css" href="assets/c7ec722f/css/bootstrap.min.css">
+    <style type="text/css">
+        #image-picker{
+            width: 800px;
+            height: 500px;
+            border: 1px solid #aaa;
+        }
+        #image-picker-toolbar{
+            height: 100px;
+            border-bottom: 1px solid #aaa;
+            margin: 0;
+        }
+        #image-picker-workplace{
+            margin: 0;
+            padding: 0;
+            width: 66.7%;
+            height: calc(100% - 100px);
+            float: left;
+            overflow: auto;
+        }
+        #image-picker-workplace li{
+            list-style: none;
+            display: block;
+            width: 100px;
+            height: 150px;
+            float: left;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+            position: relative;
+        }
+        #image-picker-workplace li input[type="checkbox"]{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        #image-picker-workplace li .thumb{
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 100px;
+            margin: 5px;
+        }
+        #image-picker-workplace li .file-name{
+            border-top: 1px solid #ddd;
+            padding: 3px;
+        }
+        #image-picker-details{
+            width: 33.3%;
+            border-left: 1px solid #aaa;
+            height: calc(100% - 100px);
+            float: right;
+            position: relative;
+        }
+        #image-picker-details .thumb{
+            width: 80%;
+            padding-top: 80%;
+            margin: 10%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        #image-picker-details .buttons-holder{
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="assets/c7ec722f/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div id="image-picker">
+        <div id="image-picker-toolbar">
+            <div>
+                <button class="btn image-picker-go-back"><i class="fa fa-arrow-left"></i></button>
+                <input type="text" class="image-picker-adress-string" readonly>
+            </div>
+            <div>
+                <button class="btn btn-info image-picker-create-folder"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-info"><i class="fa fa-download"></i></button>
+                <button class="btn btn-info"><i class="fa fa-upload"></i></button>
+                <button class="btn btn-info image-picker-bath-delete"><i class="fa fa-trash"></i></button>
+            </div>
+        </div>
+        <ul id="image-picker-workplace"></ul>
+        <div id="image-picker-details">
+            <div class="thumb"></div>
+            <div class="buttons-holder">
+                <button class="btn btn-warning">Закрыть</button>
+                <button class="btn btn-success add-image">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+<!--
+<button type="button" class="btn btn-info" data-toggle="modal" data-target="#add-category-modal-window" title="Добавить категорию"><i class="glyphicon glyphicon-plus"></i></button>
+<div id="add-category-modal-window" class="modal modal-lg" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Добавление категории тестов</h4>
+      </div>
+      <div class="modal-body">
+          <input type="text" class="form-control" id="add-category-modal-window-input" placeholder="Название категории">
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="add-category-btn" data-dismiss="modal">Добавить</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+    <script type="text/javascript">
+        function imagePicker(){
+            var baseUrl = 'http://synergy.od.ua/';
+            var $workplace = $('#image-picker-workplace');
+            var $details = $('#image-picker-details');
+            var $detailsThumbnail = $('#image-picker-details .thumb');
+
+            var currentPath = '';
+            function dir(){
+                $.get(baseUrl+'gallery/dir',{'dir':currentPath}, function (data){
+                    var list = JSON.parse(data);
+                    $workplace.empty();
+                    list.forEach(function(item){
+                        $workplace.append(' <li class="image-picker-workplace-item" data-type="'+item['type']+'"  data-path="'+item['name']+'">\n\
+                                                <input type="checkbox">\n\
+                                                <div class="thumb" style="background-image:url('+item['thumbnail']+');"></div>\n\
+                                                <div class="file-name">'+item['name']+'</div>\n\
+                                            </li>');
+                    });
+                });
+                if(currentPath === '') $('.image-picker-adress-string').val('/');
+                else $('.image-picker-adress-string').val(currentPath);
+            }
+
+            function goBack(){
+                currentPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                dir();
+            }
+
+            function createFolder(){
+                var folderName = prompt('Введите имя папки:');
+		if(folderName === null || folderName === '') return;
+                folderName = currentPath+'/'+folderName;
+                console.log(folderName);
+
+                $.get(baseUrl+'gallery/create-folder',{'folder_name':folderName},function(data){
+                    if(data === 'FOLDER_WAS_CREATED') dir();
+                });
+            }
+            function bathDelete(){
+                var filesList = [];
+                $workplace.find('li input[type="checkbox"]:checked').each(function(){
+                    filesList.push($(this).parents('li').attr('data-path'));
+                });
+                console.log(filesList);
+                if(filesList.length === 0) return ;
+                $.get(baseUrl+'gallery/bath-delete',{'files_list':JSON.stringify(filesList)},function(data){
+                    console.log(data);
+                    dir();
+                });
+            }
+            $workplace.selectable({
+                selected: function( event, ui ) {
+                    if($(ui.selected).attr('data-type') === 'dir'){
+                        currentPath += '/'+$(ui.selected).attr('data-path');
+                        console.log(currentPath);
+                        dir(currentPath);
+                        $detailsThumbnail.css('background-image','');
+                    }
+                    else{
+                        $detailsThumbnail.css('background-image',$(ui.selected).find('.thumb').css('background-image'));
+                    }
+                }
+            });
+
+
+            $('#image-picker-details .add-image').bind('click',function(){
+                console.log($detailsThumbnail.css('background-image'));
+            });
+
+
+
+            $('.image-picker-go-back').bind('click', goBack);
+            $('.image-picker-create-folder').bind('click', createFolder);
+            $('.image-picker-bath-delete').bind('click', bathDelete);
+
+
+
+            dir();
+
+
+
+        }
+        imagePicker();
+    </script>
+</body>
+</html>
