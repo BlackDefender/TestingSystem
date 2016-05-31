@@ -28,6 +28,7 @@ class AppAsset extends AssetBundle
         'js/jquery.tablesorter.min.js',
         '/js/image-picker.js',
         'js/admin.js',
+        'js/admin/messages.js',
         'js/admin/globalVars.js',
         'js/admin/helpers.js',
         'js/admin/categories.js',

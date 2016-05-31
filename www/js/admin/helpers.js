@@ -51,10 +51,10 @@ jQuery(function($){
             }
             var dataToSend = {'ids_JSON': JSON.stringify(ids)};
             if(params.action === 'trash') dataToSend['to_trash'] = params.toTrash;
-            $.get(globalVars.baseUrl+params.controller+'/'+params.action, dataToSend)
+            $.get(globalVars.baseUrl+globalVars.currentController+'/'+params.action, dataToSend)
                 .done(function(data){
                     if(parseInt(data) >= 1){
-                        window[params.controller].get();
+                        window[globalVars.currentController].get();
                     }
                 })
                 .fail(function(data){

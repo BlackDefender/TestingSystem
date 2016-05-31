@@ -59,45 +59,7 @@ jQuery(function($){
                 });
         }
 
-        globalVars.$workplace.bind('click', function(e){
-            var $target = $(e.target);
 
-            // добавить в корзину
-            if($target.hasClass('categories--single-add-to-trash')){
-                var singleToTrashMsg = 'При помещении категории в корзину нельзя будет проходить тесты, относящиеся к данной категории.<br>Уверены что хотите поместить категорию в корзину?';
-                var singleToTrashParams = {
-                    'controller': 'categories',
-                    'action': 'trash',
-                    'multiple': false,
-                    'target': $target,
-                    'toTrash': true
-                };
-                helpers.confirm('Предупреждение', singleToTrashMsg, helpers.trash, singleToTrashParams);
-            }
-
-            // восстановить из корзины
-            if($target.hasClass('categories--single-recover')){
-                helpers.trash({
-                    'controller': 'categories',
-                    'action': 'trash',
-                    'multiple': false,
-                    'target': $target,
-                    'toTrash': false
-                });
-            }
-            // удалить навсегда
-            if($target.hasClass('categories--single-delete')){
-                var singleDeleteMsg = 'При удалении категории будут также удалены все тесты, относящиеся к данной категории и результаты их прохождения.<br>Уверены что хотите удалить категорию?';
-                var singleDeleteParams = {
-                    'controller': 'categories',
-                    'action': 'delete',
-                    'multiple': false,
-                    'target': $target
-                };
-                helpers.confirm('Предупреждение', singleDeleteMsg, helpers.trash, singleDeleteParams);
-            }
-
-        });
 
         // TOOLBAR
         globalVars.$currentTaskToolbar.bind('click', function(e){
@@ -112,54 +74,6 @@ jQuery(function($){
             if($target.hasClass('categories--toolbar-show-trash')){
                 mainListIsShowingNow = false;
                 render();
-            }
-
-            // пакетно добавить в корзину
-            if($target.hasClass('categories--toolbar-batch-add-to-trash')){
-                if(helpers.getSelectedIds() === 'NO_SELECTED_ITEMS_ERROR'){
-                    helpers.alert('Ошибка','Ничего не выбрано.');
-                    return;
-                }
-                var batchToTrashMsg = 'При помещении категорий в корзину нельзя будет проходить тесты, относящиеся к данным категориям.<br>Уверены что хотите поместить выбранные категории в корзину?';
-                var batchToTrashParams = {
-                    'controller': 'categories',
-                    'action': 'trash',
-                    'multiple': true,
-                    'target': '#categories-list',
-                    'toTrash': true
-                };
-                helpers.confirm('Предупреждение', batchToTrashMsg, helpers.trash, batchToTrashParams);
-            }
-
-            // пакетно восстановить из корзины
-            if($target.hasClass('categories--toolbar-batch-recover')){
-                if(helpers.getSelectedIds() === 'NO_SELECTED_ITEMS_ERROR'){
-                    helpers.alert('Ошибка','Ничего не выбрано.');
-                    return;
-                }
-                helpers.trash({
-                    'controller': 'categories',
-                    'action': 'trash',
-                    'multiple': true,
-                    'target': '#categories-list',
-                    'toTrash': false
-                });
-            }
-
-            // удалить навсегда
-            if($target.hasClass('categories--toolbar-batch-delete')){
-                if(helpers.getSelectedIds() === 'NO_SELECTED_ITEMS_ERROR'){
-                    helpers.alert('Ошибка','Ничего не выбрано.');
-                    return;
-                }
-                var batchDeleteMsg = 'При удалении категорий будут также удалены все тесты, относящиеся к данным категориям и результаты их прохождения.<br>Уверены что хотите удалить выбранные категории?';
-                var batchDeleteParams = {
-                    'controller': 'categories',
-                    'action': 'delete',
-                    'multiple': true,
-                    'target': '#categories-list'
-                };
-                helpers.confirm('Предупреждение', batchDeleteMsg, helpers.trash, batchDeleteParams);
             }
 
             //показать основной список

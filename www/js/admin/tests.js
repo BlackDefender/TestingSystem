@@ -19,6 +19,11 @@ jQuery(function($){
             });
         }
 
+        function showMainList(){
+            mainListIsShowingNow = true;
+            render();
+        }
+
         function render(){
             globalVars.currentController = 'tests';
             helpers.clearWorklace();
@@ -38,45 +43,7 @@ jQuery(function($){
             else
                 globalVars.$currentTaskToolbar.append(trashToolbarTemplate);
         }
-
-        function singleTrash($target, toTrash){
-            var ids = [$target.parents('tr').attr('data-id')];
-            $.get(globalVars.baseUrl+'tests/trash',{'ids_JSON': JSON.stringify(ids), 'to_trash': toTrash}, function(data){
-                if(data == 1){
-                    get();
-                }
-            });
-        }
-
-        function batchTrash(toTrash){
-            var ids = helpers.getSelectedIds('#tests-list');
-            if(ids === 'NO_SELECTED_ITEMS_ERROR') return;
-            $.get(globalVars.baseUrl+'tests/trash',{'ids_JSON': JSON.stringify(ids), 'to_trash': toTrash}, function(data){
-                if(data >= 1){
-                    get();
-                }
-            });
-        }
-
-        function singleDelete($target){
-            var ids = [$target.parents('tr').attr('data-id')];
-            $.get(globalVars.baseUrl+'tests/delete',{'ids_JSON': JSON.stringify(ids)}, function(data){
-                if(data == 1){
-                    get();
-                }
-            });
-        }
-
-        function batchDelete(){
-            var ids = helpers.getSelectedIds('#tests-list');
-            if(ids === 'NO_SELECTED_ITEMS_ERROR') return;
-            $.get(globalVars.baseUrl+'tests/delete',{'ids_JSON': JSON.stringify(ids)}, function(data){
-                if(data >= 1){
-                    get();
-                }
-            });
-        }
-
+        
         function getTestResults($target){
             var id = $target.parents('tr').attr('data-id');
             testsResults.get(id);
@@ -100,18 +67,11 @@ jQuery(function($){
                 });
             }
 
-            if($target.hasClass('tests-list--single-add-to-trash') || $target.parent().hasClass('tests-list--single-add-to-trash')){
-                singleTrash($target, true);
-            }
             if($target.hasClass('tests-list--get-test-results') || $target.parent().hasClass('tests-list--get-test-results')){
                 getTestResults($target);
             }
-            if($target.hasClass('tests-list--single-recover') || $target.parent().hasClass('tests-list--single-recover')){
-                singleTrash($target, false);
-            }
-            if($target.hasClass('tests-list--single-delete') || $target.parent().hasClass('tests-list--single-delete')){
-                singleDelete($target);
-            }
+
+
 
         });
 
@@ -125,23 +85,14 @@ jQuery(function($){
                 mainListIsShowingNow = false;
                 render();
             }
-            if($target.hasClass('tests-list--toolbar-batch-add-to-trash')){
-                batchTrash(true);
-            }
-
-            if($target.hasClass('tests-list--toolbar-batch-recover')){
-                batchTrash(false);
-            }
             if($target.hasClass('tests-list--toolbar-show-main-list')){
                 mainListIsShowingNow = true;
                 render();
             }
-            if($target.hasClass('tests-list--toolbar-batch-delete')){
-                batchDelete();
-            }
         });
 
         return {
+            'showMainList':showMainList,
             'get':get
         };
     })();

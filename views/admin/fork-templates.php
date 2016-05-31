@@ -2,13 +2,13 @@
 <script type="text/template" id="categories-toolbar-template">
     <li class="btn btn-success categories--add">Добавить категорию</li>
     <li class="btn btn-info categories--toolbar-show-trash" >Показать корзину</li>
-    <li class="btn btn-warning categories--toolbar-batch-add-to-trash" >Отправить в корзину</li>
+    <li class="btn btn-warning toolbar-batch-add-to-trash" >Отправить в корзину</li>
 </script>
 
 <script type="text/template" id="categories-trash-toolbar-template">
-    <li class="btn btn-success categories--toolbar-batch-recover">Восстановить</li>
+    <li class="btn btn-success toolbar-batch-recover">Восстановить</li>
     <li class="btn btn-info categories--toolbar-show-main-list">Показать основной список</li>
-    <li class="btn btn-danger categories--toolbar-batch-delete">Удалить навсегда</li>
+    <li class="btn btn-danger toolbar-batch-delete">Удалить навсегда</li>
 </script>
 
 <script type="text/template" id="categories-list-base-template">
@@ -32,7 +32,7 @@
             <input class="list-edit-field form-control" type="text" value="${item['name']}">
         </td>
         <td>
-            <span class="btn btn-warning categories--single-add-to-trash" title="Отправить в корзину"><i class="glyphicon glyphicon-trash categories--single-add-to-trash"></i></span>
+            <span class="btn btn-warning single-add-to-trash" title="Отправить в корзину"><i class="glyphicon glyphicon-trash single-add-to-trash"></i></span>
             <!--<span class="btn btn-success categories--add-test" title="Добавить тест"><i class="glyphicon glyphicon-plus categories--add-test"></i></span>-->
         </td>
     </tr>
@@ -46,8 +46,8 @@
             <input class="list-edit-field form-control" type="text" value="${item['name']}">
         </td>
         <td>
-            <span class="btn btn-success categories--single-recover" title="Восстановить"><i class="fa fa-plus categories--single-recover"></i></span>
-            <span class="btn btn-danger categories--single-delete" title="Удалить навсегда"><i class="glyphicon glyphicon-trash categories--single-delete"></i></span>
+            <span class="btn btn-success single-recover" title="Восстановить"><i class="fa fa-plus single-recover"></i></span>
+            <span class="btn btn-danger single-delete" title="Удалить навсегда"><i class="glyphicon glyphicon-trash single-delete"></i></span>
         </td>
     </tr>
 </script>
@@ -60,13 +60,13 @@
 <script type="text/template" id="tests-list-toolbar-template">
     <li class="btn btn-success tests-list--toolbar-add-test" >Добавить тест</li>
     <li class="btn btn-info tests-list--toolbar-show-trash" >Показать корзину</li>
-    <li class="btn btn-warning tests-list--toolbar-batch-add-to-trash" >Отправить в корзину</li>
+    <li class="btn btn-warning toolbar-batch-add-to-trash" >Отправить в корзину</li>
 </script>
 
 <script type="text/template" id="tests-list-trash-toolbar-template">
-    <li class="btn btn-success tests-list--toolbar-batch-recover">Восстановить</li>
+    <li class="btn btn-success toolbar-batch-recover">Восстановить</li>
     <li class="btn btn-info tests-list--toolbar-show-main-list">Показать основной список</li>
-    <li class="btn btn-danger tests-list--toolbar-batch-delete">Удалить навсегда</li>
+    <li class="btn btn-danger toolbar-batch-delete">Удалить навсегда</li>
 </script>
 
 <script type="text/template" id="tests-list-base-template">
@@ -101,7 +101,7 @@
             <span class='btn btn-primary tests-list--get-test-results' title="Результаты тестирования"><i class="fa fa-check"></i></span>
             <!--<span class="btn btn-success tests-list--single-edit" title="Редактировать тест"><i class="glyphicon glyphicon-edit"></i></span>
             <span class="btn btn-info tests-list--single-copy" title="Создать копию теста"><i class="fa fa-clone"></i></span>-->
-            <span class="btn btn-warning tests-list--single-add-to-trash" title="Отправить в корзину"><i class="glyphicon glyphicon-trash"></i></span>
+            <span class="btn btn-warning single-add-to-trash" title="Отправить в корзину"><i class="glyphicon glyphicon-trash single-add-to-trash"></i></span>
         </td>
     </tr>
 </script>
@@ -118,8 +118,8 @@
         <td>${item['end_date_formatted']}</td>
         <td><input class="test-list--test-privacy-property" type="checkbox" <% (item['is_private'] == 1? 'checked':'') %>></td>
         <td>
-            <span class="btn btn-success tests-list--single-recover" title="Восстановить"><i class="fa fa-plus"></i></span>
-            <span class="btn btn-danger tests-list--single-delete" title="Удалить навсегда"><i class="glyphicon glyphicon-trash"></i></span>
+            <span class="btn btn-success single-recover" title="Восстановить"><i class="fa fa-plus single-recover"></i></span>
+            <span class="btn btn-danger single-delete" title="Удалить навсегда"><i class="glyphicon glyphicon-trash single-delete"></i></span>
         </td>
     </tr>
 </script>
