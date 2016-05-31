@@ -21,15 +21,22 @@ class CategoriesController extends Controller
 
     public function actionAdd($name = 'NO_NAME_ERROR'){
         if($name == 'NO_NAME_ERROR') return $name;
-        $cols_num = Yii::$app->db->createCommand()->insert('categories', ['name' => $name])->execute();
-        return $cols_num;
+        $category_exists = (new \yii\db\Query())
+            ->select(['id'])
+            ->from('categories')
+            ->where(['name' => $name])
+            ->one();
+        if($category_exists != false)
+            return 'CATEGORY_EXISTS_ERROR';
+        else
+            return Yii::$app->db->createCommand()->insert('categories', ['name' => $name])->execute();
+
     }
 
-    public function actionDelete($id){
-        $category_id = intval($id);
-        if($category_id <= 0) {return 'NO_NAME_ERROR';}
-        $cols_num = Yii::$app->db->createCommand('DELETE FROM categories WHERE id='.$category_id)->execute();
-        return $cols_num;
+    public function actionDelete($ids_JSON){
+        $ids = json_decode($ids_JSON);
+        if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
+        return Yii::$app->db->createCommand()->delete('categories', array('in', 'id', $ids))->execute();
     }
 
     public function actionRename($id = -1, $new_name = 'NO_NAME_ERROR'){
@@ -37,6 +44,18 @@ class CategoriesController extends Controller
         return Yii::$app->db->createCommand()->update('categories', ['name' => $new_name],['id'=>  intval($id)])->execute();
     }
 
+    public function actionTrash($ids_JSON, $to_trash){
+        $ids = json_decode($ids_JSON);
+        if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
+        $to_trash = $to_trash === 'true';
+        return Yii::$app->db->createCommand()->update('categories', ['is_in_trash' => $to_trash], array('in', 'id', $ids))->execute();
+    }
+
+    public function actionRemoveFromTrash($ids_JSON){
+        $ids = json_decode($ids_JSON);
+        if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
+        return Yii::$app->db->createCommand()->update('categories', ['is_in_trash' => false], array('in', 'id', $ids))->execute();
+    }
 }
 
 

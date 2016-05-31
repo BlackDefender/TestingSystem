@@ -22,10 +22,12 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/image-picker.js"></script>
-    <script type="text/javascript" src="/js/admin.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.12.0/lodash.min.js"></script>
+    <!--<script type="text/javascript" src="/js/image-picker.js"></script>-->
+    <!--<script type="text/javascript" src="/js/admin.js"></script>-->
+    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">-->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.12.0/lodash.min.js"></script>-->
+    <!--<link rel="stylesheet" href="/css/tablesorter.css">-->
+    <!--<script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>-->
 </head>
 <body>
 <?php $this->beginBody() ?>

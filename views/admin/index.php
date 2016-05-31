@@ -205,6 +205,9 @@ jQuery(function($){
     function addTest(){
         $workplace.html('');
         if ($('.add-category').html() != undefined) $('.add-category').remove();
+        $.get(baseUrl+'get-categories',function(data){
+            categoriesList = JSON.parse(data);
+        });
         $workplace.append('<aside class="btn-group-vertical add-new-test--aside-toolbar">\n\
             <div class="btn btn-primary add-new-test--add-block" title="Добавить раздел"><i class="fa fa-pause" style="transform:rotate(90deg);"></i></div>\n\
         </aside>');
@@ -344,15 +347,16 @@ jQuery(function($){
     }
     
     // получает список категорий
-    function getCatsList() {
+    function getCategoriesList() {
         $.get(baseUrl+'get-categories',function(data){
-            catsList = JSON.parse(data);
-            _renderCatsList();
+            categoriesList = JSON.parse(data);
+            _renderCategoriesList();
         });
     }
     
-    function _renderCatsList(){
-        var catsListHTML = '<table id="cats-list" class="table table-bordered table-hover">\n\
+    function _renderCategoriesList(){
+        
+        var categoriesListHTML = '<table id="categories-list" class="table table-bordered table-hover">\n\
                                 <thead>\n\
                                     <tr class="bg-info text-muted">\n\
                                         <th></th>\n\
@@ -364,39 +368,33 @@ jQuery(function($){
                                 <tbody></tbody>\n\
                             </table>';
         $workplace.html('');
-        $workplace.append(catsListHTML);
-        var $catsTable = $('#cats-list tbody');
-        catsList.forEach(function(item){
-            $catsTable.append('<tr data-cat-id="'+item['id']+'">\n\
+        if ($('.add-category').html() == undefined) $workplace.append("<div class='btn btn-warning add-category' data-toggle='modal' data-target='#myModal' title='Добавить категорию'><i class='glyphicon glyphicon-plus add-category'></i></div>")
+        $workplace.append(categoriesListHTML);
+        var $categoriesTable = $('#categories-list tbody');
+        categoriesList.forEach(function(item){
+            $categoriesTable.append('<tr data-cat-id="'+item['id']+'">\n\
                     <td>'+item['id']+'</td>\n\
                     <td><input type="checkbox"></td>\n\
                     <td>'+item['name']+'</td>\n\
                     <td>\n\
-                        <span class="btn btn-warning cat-edit" data-toggle="modal" data-target="#myModal" title="Переименовать категорию"><i class="glyphicon glyphicon-edit cat-edit"></i></span>\n\
-                        <span class="btn btn-danger cat-remove" title="Удалить категорию"><i class="glyphicon glyphicon-trash cat-remove"></i></span>\n\
-                        <span class="btn btn-success add-test" title="Добавить тест"><i class="glyphicon glyphicon-plus"></i></span>\n\
+                        <span class="btn btn-warning edit-category" data-toggle="modal" data-target="#myModal" title="Переименовать категорию"><i class="glyphicon glyphicon-edit edit-category"></i></span>\n\
+                        <span class="btn btn-danger delete-category" data-toggle="modal" data-target="#myModal" title="Удалить категорию"><i class="glyphicon glyphicon-trash delete-category"></i></span>\n\
+                        <span class="btn btn-success add-test-from-category" title="Добавить тест"><i class="glyphicon glyphicon-plus add-test-from-category"></i></span>\n\
                     </td>\n\
                 </tr>');
         });
+        
         $workplace.append(" <div id='myModal' class='modal fade'>\n\
                             <div class='modal-dialog'>\n\
                             <div class='modal-content'>\n\
                             <div class='modal-header'><button class='close' type='button' data-dismiss='modal'>×</button>\n\
-                            <h4 class='modal-title'>Переименовать категорию</h4>\n\
-                            </div>\n\
-\n\
-                            <div class='modal-body'>\n\
-                            <input class = 'catId' type = 'text' value = ''>\n\
-                            <input class = 'catName' type = 'text' value = ''>\n\
-                            </div>\n\
-\n\
-                            <div class='modal-footer'><button class='btn btn-default' type='button' data-dismiss='modal'>Закрыть</button>\n\
-                            <button type='button' class='btn btn-primary saveCat'>Сохранить</button>\n\
+                            <h4 class='modal-title'></h4></div>\n\
+                            <div class='modal-body'></div>\n\
+                            <div class='modal-footer'>\n\
                             </div>\n\
                             </div>\n\
                             </div>\n\
-                            </div>");
-        if ($('.add-category').html() == undefined) $('.cats').append("<li class='btn btn-warning add-category' title='Добавить категорию'><i class='glyphicon glyphicon-plus'></i></li>")
+                            </div>");   
     }
 
 //_______________________________________
@@ -406,7 +404,9 @@ jQuery(function($){
     // обработчик нажатия в рабочей области
     // идентифицируем событие и делаем что надо
     // сюда можно добавлять обработку любых событий, происходящих на бескрайних просторах .work-space
-    $workplace.bind('click', function(e){
+    
+
+$workplace.bind('click', function(e){
         var $target = $(e.target);
         // изменение приватности теста
         if($target.hasClass('test-list--test-privacy-property')){
@@ -448,14 +448,40 @@ jQuery(function($){
             else $obj = $target.parent();
             deleteQuestionFromBlock($obj);
         }
-        if ($target.hasClass('cat-edit')){
+        
+        if ($target.hasClass('add-category')){
+            $('.modal-title').html('Добавить категорию');
+            $('.modal-body').html(" <input class = 'catId' type = 'text' value = ''>\n\
+                                    <input class = 'catName' type = 'text' value = '' autofocus>");            
+            $('.catName').attr('placeholder', 'Новая категория');
+            $('.modal-footer').html("<button class='btn btn-default' type='button' data-dismiss='modal'>Закрыть</button>\n\
+            <button type='button' class='btn btn-primary new-category-submit' data-dismiss='modal'>Сохранить</button>");            
+        }
+        
+        if ($target.hasClass('new-category-submit')){
+            $.get('http://synergy.od.ua/categories/add', {'name':$('.catName').val()}, function(data){
+            // data - данные с сервера
+                if (data != 1) {
+                    alert('Не удалось создать. Почему-то... гуглим телефон центральной прачечной.');
+                } else {
+                  getCategoriesList();                
+                }                
+            });
+        }
+        
+        if ($target.hasClass('edit-category')){
+            $('.modal-title').html('Переименовать категорию');
+            $('.modal-body').html(" <input class = 'catId' type = 'text' value = ''>\n\
+                                    <input class = 'catName' type = 'text' value = '' autofocus>");
+            $('.modal-footer').html("<button class='btn btn-default' type='button' data-dismiss='modal'>Закрыть</button>\n\
+            <button type='button' class='btn btn-primary rename-category-submit' data-dismiss='modal'>Сохранить</button>");            
             $('.catId').val('');
             $('.catName').val('');
             $id = $($target).closest('tr').find('td:eq(0)').html();
             $.get(baseUrl+'get-categories',function(data){
-                catsList = JSON.parse(data);
+                categoriesList = JSON.parse(data);
             });            
-            catsList.forEach(function(item){
+            categoriesList.forEach(function(item){
                 if (item['id'] === $id) {                    
                     $name = item['name'];                    
                     $('.catName').val($name);
@@ -463,11 +489,46 @@ jQuery(function($){
                 }
             });
         }
-        if ($target.hasClass('saveCat')){
-            //alert($('.catId').val());
+             
+        if ($target.hasClass('rename-category-submit')){
+            $.get('http://synergy.od.ua/categories/rename', {'id':$('.catId').val(), 'new_name':$('.catName').val()}, function(data){
+            // data - данные с сервера
+                if (data != 1) {
+                    alert('Не удалось переименовать. Извините уж...');
+                } else {
+                  getCategoriesList();  
+                }
+            });    
         }
-        if ($target.hasClass('cat-remove')){
+        
+        if ($target.hasClass('delete-category')){
             
+            $('.modal-title').html('Удалить категорию');
+            $('.modal-body').html('<div class="confirm">Вы уверены? </div>');
+            $('.catId').val('');
+            $('.catName').css('display', 'none');
+            $('.modal-footer').html("<button class='btn btn-default' type='button' data-dismiss='modal'>Закрыть</button>\n\
+            <button type='button' class='btn btn-primary delete-category-submit' data-dismiss='modal'>Удалить</button>");                 
+            $id = $($target).closest('tr').find('td:eq(0)').html();
+            $('.catId').val($id);
+        }
+        
+        if ($target.hasClass('delete-category-submit')){
+            $.get('http://synergy.od.ua/categories/delete', {'id':$('.catId').val()}, function(data){
+            // data - данные с сервера
+                if (data != 1) {
+                    alert('Удаление не выполнено. Попробуйте еще раз.');
+                } else {
+                  getCategoriesList();  
+                }
+            });    
+        }
+        
+        if ($target.hasClass('add-test-from-category')){
+            $id = $($target).closest('tr').find('td:eq(0)').html();
+            addTest();
+            $('#test-category-selector').val($id).change();
+
         }
     });    
     
@@ -489,12 +550,12 @@ jQuery(function($){
         $('.get-tests-list').bind('click', getTestsList);
         $('.batch-remove-tests').bind('click', batchRemoveTests);
         $('.batch-copy-tests').bind('click', batchCopyTests);
-        $('.categories').bind('click', getCatsList);
+        $('.categories').bind('click', getCategoriesList);
 
         $('.add-category-btn').bind('click',function(){
             var categoryName = $('#add-category-modal-window-input').val();
             $.get(baseUrl+'add-category',{'name':categoryName}, function(data){
-
+               
             });
         });
 

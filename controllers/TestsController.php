@@ -56,14 +56,9 @@ class TestsController extends Controller
         return Yii::$app->db->createCommand()->delete('tests', array('in', 'id', $ids))->execute();
     }
 
-    public function actionGet($test_id = '__ERROR'){
-        if($test_id == '__ERROR') return $test_id;
-    }
-
-    public function actionChangePrivacy($id, $is_private) {
-        $test_id = intval($id);
-        if($test_id <= 0) {return '__ERROR';}
-        return Yii::$app->db->createCommand()->update('tests', ['is_private' => ($is_private === 'true')], 'id = '.$test_id)->execute();
+    public function actionRename($id = -1, $new_name = 'NO_NAME_ERROR'){
+        if($id <= 0 || $new_name == 'NO_NAME_ERROR') return '__ERROR';
+        return Yii::$app->db->createCommand()->update('tests', ['name' => $new_name],['id'=>  intval($id)])->execute();
     }
 
     public function actionTrash($ids_JSON, $to_trash){
@@ -78,6 +73,17 @@ class TestsController extends Controller
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         return Yii::$app->db->createCommand()->update('tests', ['is_in_trash' => false], array('in', 'id', $ids))->execute();
     }
+
+    public function actionGet($test_id = '__ERROR'){
+        if($test_id == '__ERROR') return $test_id;
+    }
+
+    public function actionChangePrivacy($id, $is_private) {
+        $test_id = intval($id);
+        if($test_id <= 0) {return '__ERROR';}
+        return Yii::$app->db->createCommand()->update('tests', ['is_private' => ($is_private === 'true')], 'id = '.$test_id)->execute();
+    }
+
 
 
 

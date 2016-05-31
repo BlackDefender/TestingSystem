@@ -46,10 +46,10 @@ jQuery(function($){
                 <h1>'+ test['name'] +'</h1> \n\
                 <fieldset> \n\
                     <legend>Регистрационные данные</legend>\n\
-                    <div class="form-group question user-data" data-input-name="firstName"> <label for="firstName">Имя</label> <input id="firstName" name="firstName" type="text" class="form-control" value="Alex"> </div>\n\
-                    <div class="form-group question user-data" data-input-name="lastName"> <label for="lastName">Фамилия</label> <input id="lastName" name="lastName" type="text" class="form-control"  value="Black"> </div>\n\
-                    <div class="form-group question user-data" data-input-name="tel"> <label for="tel">Телефон</label> <input id="tel" name="tel" type="text" class="form-control" value="0637555229"> </div>\n\
-                    <div class="form-group question user-data" data-input-name="email"> <label for="email">E-mail</label> <input id="email" name="email" type="text" class="form-control" value="pirotexnik@mail.ru"> </div>\n\
+                    <div class="form-group question user-data" data-input-name="firstName"> <label for="firstName">Имя</label> <input id="firstName" name="firstName" type="text" class="form-control"> </div>\n\
+                    <div class="form-group question user-data" data-input-name="lastName"> <label for="lastName">Фамилия</label> <input id="lastName" name="lastName" type="text" class="form-control"> </div>\n\
+                    <div class="form-group question user-data" data-input-name="tel"> <label for="tel">Телефон</label> <input id="tel" name="tel" type="text" class="form-control"> </div>\n\
+                    <div class="form-group question user-data" data-input-name="email"> <label for="email">E-mail</label> <input id="email" name="email" type="text" class="form-control"> </div>\n\
                 </fieldset></form>');
 
             test['blocks'].forEach(function(block){
