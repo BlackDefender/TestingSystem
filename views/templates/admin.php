@@ -93,7 +93,17 @@
             <label class="list-item-label">${item['name']}</label>
             <input class="list-edit-field form-control" type="text" value="${item['name']}">
         </td>
-        <td>${categoriesListAssociated[item['category_id']]}</td>
+        <td>
+            <select  class="form-control test-list--test-category">
+                <% _.forEach(categories, function(category){
+                    if(item['category_id']== category['id']){
+                        %> <option selected value="${category['id']}">${category['name']}</option> <%
+                    }else{
+                        %> <option value="${category['id']}">${category['name']}</option> <%
+                    }
+                });%>
+            </select>
+        </td>
         <td>${item['start_date_formatted']}</td>
         <td>${item['end_date_formatted']}</td>
         <td><input class="test-list--test-privacy-property" type="checkbox" <% (item['is_private'] == 1? 'checked':'') %>></td>

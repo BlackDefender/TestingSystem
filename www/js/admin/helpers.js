@@ -34,6 +34,13 @@ jQuery(function($){
             });
             return selectedItemsIdsList;
         },
+        changesResultAnimation: function($target, success){
+            var startColor = success ? 'rgba(92, 184, 92, 0.4)' : 'rgba(217, 83, 79, 0.4)';
+            var $td = $target.parents('td');
+            $td.stop().animate({'background-color': startColor}, 500, function(){
+                $td.animate({'background-color':'transparent'}, 500);
+            });
+        },
         /*helpers.trash({
             'controller': 'tests' || 'categories',
             'action': 'trash' || 'delete',
@@ -102,10 +109,15 @@ jQuery(function($){
                     if(data == 1){
                         $target.css({'display':'none'});// убираем input
                         $label.html(newCategoryName).css({'display':'block'});// меняем значение label и показываем его
+                        helpers.changesResultAnimation($target, true);
                         helpers.getCategoriesList();
+                    }
+                    else{
+                        helpers.changesResultAnimation($target, false);
                     }
                 })
                 .fail(function(arg){
+                    helpers.changesResultAnimation($target, false);
                     console.log('fail',arg);
                 });
 

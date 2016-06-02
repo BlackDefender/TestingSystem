@@ -15,7 +15,7 @@ AppAsset::register($this);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <link rel="stylesheet" href="/css/admin-style.css" type="text/css"/>
+    <!--<link rel="stylesheet" href="/css/admin-style.css" type="text/css"/>-->
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>

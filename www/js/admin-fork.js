@@ -16,7 +16,7 @@ jQuery(function($){
 
         // обработчики для кнопок тулбара
         //$('.add-test-btn').bind('click', testEditor.add);
-        $('.get-tests-list-btn').bind('click', tests.get);
+        $('.get-tests-list-btn').bind('click', tests.showMainList);
         $('.get-categories-list-btn').bind('click', categories.showMainList);
 
 

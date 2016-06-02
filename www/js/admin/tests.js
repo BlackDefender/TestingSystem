@@ -34,7 +34,7 @@ jQuery(function($){
 
             globalVars.testsList.forEach(function(item){
                 if(mainListIsShowingNow != item['is_in_trash'])
-                    itemsHTML += itemTemplateFunction({'item':item, 'categoriesListAssociated':globalVars.categoriesListAssociated});
+                    itemsHTML += itemTemplateFunction({'item':item, 'categories':globalVars.categoriesList});
             });
             $('#tests-list tbody').append(itemsHTML);
 
@@ -43,28 +43,43 @@ jQuery(function($){
             else
                 globalVars.$currentTaskToolbar.append(trashToolbarTemplate);
         }
-        
+
         function getTestResults($target){
             var id = $target.parents('tr').attr('data-id');
             testsResults.get(id);
         }
 
-
+        globalVars.$workplace.bind('change', function(e){
+            var $target = $(e.target);
+            // изменение категории теста
+            if($target.hasClass('test-list--test-category')){
+                var categoryId = $target.val();
+                var testId = $target.parents('tr').attr('data-id');
+                $.get(globalVars.baseUrl+'tests/change-category', {'test_id':testId,'new_category_id':categoryId})
+                        .done(function(data){
+                            if(data == 1){
+                                helpers.changesResultAnimation($target, true);
+                            }
+                        })
+                        .fail(function(){
+                            helpers.changesResultAnimation($target, false);
+                        });
+            }
+        });
         globalVars.$workplace.bind('click', function(e){
             var $target = $(e.target);
             // изменение приватности теста
             if($target.hasClass('test-list--test-privacy-property')){
                 var id = $target.parents('tr').attr('data-id');
-                $.get(globalVars.baseUrl+'tests/change-privacy',{'id':id, 'is_private':$target.is( ":checked" )}, function(data){
-                    var text;
-                    if(data == 1) text = 'Изменено';
-                    else text = 'Ошибка';
-                    var $node = $('<span class="text-success"> '+text+'</span>');
-                    $target.parent().append($node);
-                    $node.animate({'opacity':0}, 2000, function(){
-                        $node.remove();
+                $.get(globalVars.baseUrl+'tests/change-privacy',{'id':id, 'is_private':$target.is( ":checked" )})
+                    .done(function(data){
+                        if(data == 1){
+                            helpers.changesResultAnimation($target, true);
+                        }
+                    })
+                    .fail(function(){
+                        helpers.changesResultAnimation($target, false);
                     });
-                });
             }
 
             if($target.hasClass('tests-list--get-test-results') || $target.parent().hasClass('tests-list--get-test-results')){

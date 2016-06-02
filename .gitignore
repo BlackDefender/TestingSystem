@@ -1,1 +1,4 @@
+.gitignore
 config
+www/v2/
+www/v2a/

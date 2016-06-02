@@ -92,17 +92,7 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-
-    public function actionGetCategories(){
-        $categories_list = Yii::$app->db->createCommand('SELECT * FROM categories')->queryAll();
-        return json_encode($categories_list);
-    }
-
-    public function actionGetTestsList(){
-        $tests_list = Yii::$app->db->createCommand('SELECT id, category_id, name, DATE_FORMAT(start_date, \'%d.%m.%Y\') AS start_date_formatted, DATE_FORMAT(end_date, \'%d.%m.%Y\') AS end_date_formatted FROM tests WHERE is_private = FALSE')->queryAll();
-        return json_encode($tests_list);
-    }
-
+    /*
     public function actionGetTest($id){
         $test_id = intval($id);
         if($test_id <= 0) {return '__ERROR';}
@@ -144,7 +134,7 @@ class SiteController extends Controller
 
             $test_result_id = Yii::$app->db->getLastInsertID();
 
-            
+
             $questions_ids = array();
             foreach($test_result['responses'] as $resp){
                 $questions_ids[] = intval($resp['question_id']);
@@ -210,5 +200,5 @@ class SiteController extends Controller
             $transaction->rollBack();
             throw $e;
         }
-    }
+    }*/
 }
