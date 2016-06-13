@@ -1,7 +1,82 @@
 jQuery(function($){
     var testEditor = (function(){
+        var itIsNewTest = true,
+            oldTestId;
+        // редактировать существующий тест
+        function edit(id){
+            $.get(globalVars.baseUrl+'tests/get',{'id':id})
+                    .done(function(dataJSON){
+                        if(dataJSON === 'NO_SUCH_TEST_ERROR'){
+                            helpers.alert('Ошибка', 'Нет такого теста');
+                            return ;
+                        }
+                        var data;
+                        try{
+                            data = JSON.parse(dataJSON);
+                        }catch(e){
+                            helpers.alert('Ошибка', 'Не удалось обработать полученные данные');
+                            return ;
+                        }
+                        console.log(data);
+                        addTest(true);
+                        itIsNewTest = false;
+                        oldTestId = id;
+                        $('#test-category-selector').val(data['category_id']);
+
+                        $('#add-new-test--test-name').val(data['name']);
+
+                        $('#add-new-test--is-private')[0].checked = parseInt(data['is_private']);
+
+                        var startDate = data['start_date_formatted'].split('.'),
+                            endDate = data['end_date_formatted'].split('.');
+                        $('#add-new-test--start-date-dd').val(startDate[0]);
+                        $('#add-new-test--start-date-mm').val(startDate[1]);
+                        $('#add-new-test--start-date-yyyy').val(startDate[2]);
+
+                        $('#add-new-test--end-date-dd').val(endDate[0]);
+                        $('#add-new-test--end-date-mm').val(endDate[1]);
+                        $('#add-new-test--end-date-yyyy').val(endDate[2]);
+
+
+                        data['blocks'].forEach(function(block){
+                            addBlock(true);
+                            var $currentBlock = globalVars.$workplace.find('.add-new-test--questions-block-wrap:last');
+                            $currentBlock.find('.add-new-test--questions-block-name').val(block['name']);
+                            block['questions'].forEach(function(question){
+                                addQuestion(true);
+                                var $curentQuestion = $currentBlock.find('.add-new-test--questions-block--question-wrap:last');
+                                $curentQuestion.find('.add-new-test--questions-block--question-name').val(question['name']);
+                                $curentQuestion.find('.add-new-test--questions-block--test-type-select').val(question['type']);
+                                if(question['img'] !== ''){
+                                    $curentQuestion.find('.add-new-test--questions-block--question-img').attr('data-url', question['img']);
+                                    $curentQuestion.find('.add-new-test--questions-block--question-img').css('background-image', 'url('+question['img']+')');
+                                }
+                                question['answers'].forEach(function(answer){
+                                    $curentQuestion.find('.add-new-test--questions-block--question-add-answer').click();
+                                    var $curentAnswer = $curentQuestion.find('.add-new-test--questions-block--question-answer:last');
+                                    $curentAnswer.find('input[type="text"]').val(answer['name']);
+                                    if(answer['img'] !== ''){
+                                        $curentAnswer.find('.add-new-test--questions-block--question-answer-img').attr('data-url', answer['img']);
+                                        $curentAnswer.find('.add-new-test--questions-block--question-answer-img').css('background-image', 'url('+answer['img']+')');
+                                    }
+                                    if(question['type'] !== 'text'){
+                                        $curentAnswer.find('input[type="'+question['type']+'"]')[0].checked = parseInt(answer['is_true']);
+                                    }
+                                });
+                            });
+                        });
+
+                        $(window).scrollTop(0);
+
+                    })
+                    .fail(function(){
+                        helpers.alert('Ошибка', 'Не удалось получить тест для редактирования');
+                    });
+        }
+
         //Создаем новый тест
-        function addTest(){
+        function addTest(_preventDefault){
+            itIsNewTest = true;
             globalVars.currentController = 'testEditor';
             helpers.clearWorklace();
             globalVars.$workplace.append($('#add-test-template').html());
@@ -12,6 +87,8 @@ jQuery(function($){
                 categoriesListItemsHTML += categoriesListItemTemplateFunction({'item':item});
             });
             $('#test-category-selector').append(categoriesListItemsHTML);
+
+            if(_preventDefault) return ;
 
             addBlock();
 
@@ -30,25 +107,26 @@ jQuery(function($){
             $('#add-new-test--test-name').focus();
         }
 
-        function addBlock(){
+        function addBlock(_preventDefault){
             globalVars.$workplace.append($('#add-test-block-template').html());
+            if(_preventDefault) return ;
             addQuestion();
             $('.add-new-test--questions-block-wrap:last .add-new-test--questions-block-name').focus();
         }
         function deleteBlock(){
             $(this).parents('.add-new-test--questions-block-wrap').remove();
         }
-        function addQuestion(){
+        function addQuestion(_preventDefault){
             // определяем откуда был вызов функции
             // если нажатием кнопки в форме - добавляем вопрос в соответствующий блок вопросов
             // если чистый вызов функции, то в последний блок. (используется при инициализации блока)
             var $target;
-            if($(this).hasClass('add-new-test--add-question') || $(this).parent().hasClass('add-new-test--add-question'))
+            if($(this).hasClass('add-new-test--add-question'))
                 $target = $(this).parents('.add-new-test--questions-block-wrap').children('.add-new-test--questions-block');
             else $target = $('.add-new-test--questions-block:last');
             if($target.length === 0) return ; // а вдруг вызвали откуда не надо.
             $target.append($('#add-test-question-template').html());
-
+            if(_preventDefault) return ;
             $target.find('.add-new-test--questions-block--question-wrap:last .add-new-test--questions-block--question-add-answer').click();
             $target.find('.add-new-test--questions-block--question-wrap:last .add-new-test--questions-block--question-name').focus();
         }
@@ -256,6 +334,8 @@ jQuery(function($){
             testObject['is_private'] = isPrivate;
             testObject['blocks'] = blocks;
 
+            //return ;
+            if(itIsNewTest){
             $.post(globalVars.baseUrl+'tests/add',{'test_JSON': JSON.stringify(testObject)})
                     .done(function(data){
                         if(data == 1){
@@ -272,11 +352,39 @@ jQuery(function($){
                                 return;
                             }
                         }
-
                     })
                     .fail(function(){
                         helpers.alert('Ошибка', 'Не удалось создать тест.');
                     });
+            }else{
+                $.post(globalVars.baseUrl+'tests/edit',{'test_JSON': JSON.stringify(testObject), 'id':oldTestId})
+                    .done(function(data){
+                        console.log(data);
+                        switch (data) {
+                            case 'TEST_CHANGED':
+                                helpers.alert(' ', 'Тест был изменен');
+                                tests.get();
+                                break;
+                            case 'TEST_COPIED':
+                                helpers.alert(' ', 'Так как тест уже проходили - была создана копия.');
+                                tests.get();
+                                break;
+                            case 'NO_SUCH_TEST':
+                                helpers.alert(' ', 'Тест не был найден');
+                                break;
+                            case 'JSON_PARSE_ERROR':
+                                helpers.alert('Ошибка', 'Проблема со входними данными для теста.<br>Проверьте ввели ли Вы все правильно.');
+                                break;
+                            case 'DB_ERROR':
+                                helpers.alert('Ошибка', 'Не удалось занести тест в базу данных.');
+                                break;
+                        }
+                    })
+                    .fail(function(){
+                        helpers.alert('Ошибка', 'Не удалось создать тест.');
+                    });
+
+            }
         }
 
         // обработчик нажатия в рабочей области
@@ -356,7 +464,8 @@ jQuery(function($){
         });
 
         return {
-            add:addTest
+            add:addTest,
+            edit: edit
         };
 
     })();

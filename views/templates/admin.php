@@ -110,9 +110,8 @@
             <div class="btn-group">
                 <span class='btn btn-primary tests-list--get-test-results' title="Результаты тестирования"><i class="fa fa-check tests-list--get-test-results"></i></span>
                 <span class="btn btn-info tests-list--single-copy" title="Создать копию теста"><i class="fa fa-clone tests-list--single-copy"></i></span>
-                <% if(item['is_private'] == 1){ %>
-                    <span class="btn btn-info tests-list--single-get-link" title="Получить ссылку на тест"><i class="fa fa-link tests-list--single-get-link"></i></span>
-                <% } %>
+                <span class="btn btn-info tests-list--single-edit" title="Редактировать тест"><i class="fa fa-edit tests-list--single-edit"></i></span>
+                <span class="btn btn-info tests-list--single-get-link" title="Получить ссылку на тест"><i class="fa fa-link tests-list--single-get-link"></i></span>
                 <% if(mainListIsShowingNow){ %>
                     <!--<span class="btn btn-success tests-list--single-edit" title="Редактировать тест"><i class="glyphicon glyphicon-edit"></i></span>-->
                     <span class="btn btn-warning single-add-to-trash" title="Отправить в корзину"><i class="glyphicon glyphicon-trash single-add-to-trash"></i></span>

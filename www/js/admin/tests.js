@@ -142,6 +142,35 @@ jQuery(function($){
             helpers.alert('Ссылка на тест', globalVars.testsListAssociated[testId]['name'] +'<br>'+ globalVars.baseUrl+'?test-id='+testId);
         }
 
+        function changeTestPrivacy($target){
+            var id = $target.parents('tr').attr('data-id');
+            $.get(globalVars.baseUrl+'tests/change-privacy',{'id':id, 'is_private':$target.is( ":checked" )})
+                .done(function(data){
+                    if(data == 1){
+                        helpers.changesResultAnimation($target, true);
+                        helpers.getTestsList();
+                    }
+                })
+                .fail(function(){
+                    helpers.changesResultAnimation($target, false);
+                });
+        }
+
+        function changeTestCategory($target){
+            var categoryId = $target.val();
+            var testId = $target.parents('tr').attr('data-id');
+            $.get(globalVars.baseUrl+'tests/change-category', {'test_id':testId,'new_category_id':categoryId})
+                    .done(function(data){
+                        if(data == 1){
+                            helpers.changesResultAnimation($target, true);
+                            helpers.getTestsList();
+                        }
+                    })
+                    .fail(function(){
+                        helpers.changesResultAnimation($target, false);
+                    });
+        }
+
         // обработчики изменения даты начала или окончания теста
         globalVars.$workplace.bind('focusout', function(e){
             var $target = $(e.target);
@@ -185,25 +214,26 @@ jQuery(function($){
             var $target = $(e.target);
             // изменение приватности теста
             if($target.hasClass('test-list--test-privacy-property')){
-                var id = $target.parents('tr').attr('data-id');
-                $.get(globalVars.baseUrl+'tests/change-privacy',{'id':id, 'is_private':$target.is( ":checked" )})
-                    .done(function(data){
-                        if(data == 1){
-                            helpers.changesResultAnimation($target, true);
-                            setTimeout(get, 1000);
-                        }
-                    })
-                    .fail(function(){
-                        helpers.changesResultAnimation($target, false);
-                    });
+                changeTestPrivacy($target);
             }
 
+            // посмотреть результаты тестирования
             if($target.hasClass('tests-list--get-test-results')){
                 getTestResults($target);
             }
+
+            // редактировать тест
+            if($target.hasClass('tests-list--single-edit')){
+                var id = $target.parents('tr').attr('data-id');
+                testEditor.edit(id);
+            }
+
+            // сделать копию теста
             if($target.hasClass('tests-list--single-copy')){
                 copyTest($target);
             }
+
+            // получить ссылку на тест
             if($target.hasClass('tests-list--single-get-link')){
                 showTestLink($target);
             }
@@ -213,18 +243,7 @@ jQuery(function($){
             var $target = $(e.target);
             // изменение категории теста
             if($target.hasClass('test-list--test-category')){
-                var categoryId = $target.val();
-                var testId = $target.parents('tr').attr('data-id');
-                $.get(globalVars.baseUrl+'tests/change-category', {'test_id':testId,'new_category_id':categoryId})
-                        .done(function(data){
-                            if(data == 1){
-                                helpers.changesResultAnimation($target, true);
-                                helpers.getTestsList();
-                            }
-                        })
-                        .fail(function(){
-                            helpers.changesResultAnimation($target, false);
-                        });
+                changeTestCategory($target);
             }
         });
 

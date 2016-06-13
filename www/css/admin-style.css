@@ -37,8 +37,7 @@ body{
 }
 .add-new-test--aside-toolbar{
     position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
+    bottom: 20px;
     right: 0;
 }
 .add-new-test--questions-block-wrap{

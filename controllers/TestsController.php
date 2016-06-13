@@ -37,7 +37,7 @@ class TestsController extends Controller
                     $question_id = Yii::$app->db->getLastInsertID();
 
                     foreach ($question['answers'] as $answer) {
-                        Yii::$app->db->createCommand()->insert('answers', ['question_id' => $question_id, 'name'=>htmlspecialchars($answer['name']), 'img' => $answer['img'], 'is_true' => ($answer['is_true'] === 'true')])->execute();
+                        Yii::$app->db->createCommand()->insert('answers', ['question_id' => $question_id, 'name'=>htmlspecialchars($answer['name']), 'img' => $answer['img'], 'is_true' => ($answer['is_true'] == 'true')])->execute();
                     }
                 }
             }
@@ -46,6 +46,41 @@ class TestsController extends Controller
         }catch(Exception $e){
             $transaction->rollBack();
             return 'DB_ERROR';
+        }
+    }
+
+    public function actionEdit(){
+        $test_id = intval($_POST['id']);
+        if($test_id <= 0) {return 'NO_TEST_ID_ERROR';}
+        $queryObj = new \yii\db\Query();
+        $test_exists = $queryObj->from('tests')->where(['id' => $test_id])->count();
+        // если тест с таким id существует
+        if($test_exists == 1){
+            $test_has_results = $queryObj->from('tests_results')->where(['test_id' => $test_id])->count();
+            // если тест еще никто не проходил создаем новый тест и удаляем старый
+            if($test_has_results == 0){
+                $add_result = $this->actionAdd();
+                if($add_result == 1){
+                    $this->actionDelete('['.$test_id.']');
+                    return 'TEST_CHANGED';
+                }else{
+                    return $add_result;
+                }
+            }else{
+                // если тест проходили - создаем копию
+                $test = json_decode($_POST['test_JSON'], TRUE);
+                if(json_last_error() != JSON_ERROR_NONE) {return 'JSON_PARSE_ERROR';}
+                $test['test_name'] = $test['test_name'] . ' копия';
+                $_POST['test_JSON'] = json_encode($test);
+                $add_result = $this->actionAdd();
+                if($add_result == 1){
+                    return 'TEST_COPIED';
+                }else{
+                    return $add_result;
+                }
+            }
+        }else{
+            return 'NO_SUCH_TEST';
         }
     }
 
@@ -73,23 +108,21 @@ class TestsController extends Controller
         return Yii::$app->db->createCommand()->update('tests', ['is_in_trash' => false], array('in', 'id', $ids))->execute();
     }
 
-    public function actionGet($id = '__ERROR'){
+    public function actionGet($id = 'NO_TEST_ID_ERROR'){
         $test_id = intval($id);
-        if($test_id <= 0) {return '__ERROR';}
+        if($test_id <= 0) {return 'NO_TEST_ID_ERROR';}
 
-        $test = Yii::$app->db->createCommand('SELECT * FROM tests WHERE id='.$test_id)->queryAll();// находим тест
+        $test = Yii::$app->db->createCommand('SELECT id, category_id, name, DATE_FORMAT(start_date, \'%d.%m.%Y\') AS start_date_formatted, DATE_FORMAT(end_date, \'%d.%m.%Y\') AS end_date_formatted, is_private, is_in_trash FROM tests WHERE id='.$test_id)->queryAll();// находим тест
+        if(count($test) === 0) return 'NO_SUCH_TEST_ERROR';
         $test = $test[0];
 
         $blocks = Yii::$app->db->createCommand('SELECT * FROM blocks WHERE test_id='.$test_id)->queryAll();// находим блоки теста
-
         foreach ($blocks as $block_key => $block) {
 
             $blocks[$block_key]['questions'] = Yii::$app->db->createCommand('SELECT * FROM questions WHERE block_id='.$block['id'])->queryAll();// к каждому блоку добавляем вопросы
-
             foreach ($blocks[$block_key]['questions'] as $question_key => $question) {
-                // к вопросам добавляем варианты ответов, но только в том случае если это не свободный вариант ответа
-                if($blocks[$block_key]['questions'][$question_key]['type'] != 'text')
-                    $blocks[$block_key]['questions'][$question_key]['answers'] = Yii::$app->db->createCommand('SELECT * FROM answers WHERE question_id='.$question['id'])->queryAll();
+                // к вопросам добавляем варианты ответов
+                $blocks[$block_key]['questions'][$question_key]['answers'] = Yii::$app->db->createCommand('SELECT * FROM answers WHERE question_id='.$question['id'])->queryAll();
             }
         }
         $test['blocks'] = $blocks;
@@ -154,6 +187,7 @@ class TestsController extends Controller
         if($test_id <= 0) {return '__ERROR';}
 
         $test = Yii::$app->db->createCommand('SELECT id, name FROM tests WHERE id='.$test_id)->queryAll();// находим тест
+        if(count($test) === 0) return 'NO_SUCH_TEST_ERROR';
         $test = $test[0];
 
         $blocks = Yii::$app->db->createCommand('SELECT * FROM blocks WHERE test_id='.$test_id)->queryAll();// находим блоки теста
