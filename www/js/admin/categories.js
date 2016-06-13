@@ -3,8 +3,7 @@ jQuery(function($){
         var mainListIsShowingNow = true;
 
         var baseTemplate = $('#categories-list-base-template').html(),
-            mainListItemTemplateFunction = _.template($('#categories-list-item-template').html()),
-            trashItemTemplateFunction = _.template($('#categories-list-trash-item-template').html()),
+            itemTemplateFunction = _.template($('#categories-list-item-template').html()),
             mainListToolbarTemplate = $('#categories-toolbar-template').html(),
             trashToolbarTemplate = $('#categories-trash-toolbar-template').html();
 
@@ -25,19 +24,16 @@ jQuery(function($){
             helpers.clearWorklace();
             globalVars.$workplace.append(baseTemplate);
 
-            var itemsHTML = '',
-                itemTemplateFunction = mainListIsShowingNow ? mainListItemTemplateFunction : trashItemTemplateFunction;
+            var itemsHTML = '';
+                //itemTemplateFunction = mainListIsShowingNow ? mainListItemTemplateFunction : trashItemTemplateFunction;
             globalVars.categoriesList.forEach(function(item){
                 if(mainListIsShowingNow != item['is_in_trash']){
-                    itemsHTML += itemTemplateFunction({'item':item});
+                    itemsHTML += itemTemplateFunction({'item':item, 'mainListIsShowingNow':mainListIsShowingNow});
                 }
             });
             $('#categories-list tbody').append(itemsHTML);
 
-            if(mainListIsShowingNow)
-                globalVars.$currentTaskToolbar.append(mainListToolbarTemplate);
-            else
-                globalVars.$currentTaskToolbar.append(trashToolbarTemplate);
+            globalVars.$currentTaskToolbar.append(mainListIsShowingNow ? mainListToolbarTemplate : trashToolbarTemplate);
 
             $("#categories-list").tablesorter({
                 headers:{ 0:{sorter: false}, 2:{sorter: false} }
@@ -58,8 +54,6 @@ jQuery(function($){
                     helpers.alert('Ошибка', 'Что-то пошло не так.');
                 });
         }
-
-
 
         // TOOLBAR
         globalVars.$currentTaskToolbar.bind('click', function(e){

@@ -11,6 +11,7 @@ AdminAsset::register($this);
 // подключаем файлы с шаблонами
 require_once dirname(__FILE__).'/../templates/admin.php';
 require_once dirname(__FILE__).'/../templates/helpers.php';
+require_once dirname(__FILE__).'/../templates/gallery.php';
 ?>
 
 <ul class='toolbar btn-group'>

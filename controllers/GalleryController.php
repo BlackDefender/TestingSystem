@@ -13,6 +13,8 @@ class GalleryController extends Controller
 {
     public $enableCsrfValidation = false;
 
+    private static $basepath = '/home/synerg00/synergy.od.ua/www/gallery';
+
     public function actionIndex()
     {
         //$this->layout = 'admin';
@@ -21,8 +23,8 @@ class GalleryController extends Controller
 
     public function actionDir($dir = '/'){
         if($dir == '') $dir == '/';
-        $basepath = '/home/synerg00/synergy.od.ua/www/gallery';
-        $path = $basepath.$dir;
+
+        $path = self::$basepath.$dir;
         $list = scandir($path);
         array_shift($list);// delete .
         array_shift($list);// delete ..
@@ -50,7 +52,7 @@ class GalleryController extends Controller
 
     public function actionCreateFolder($folder_name)
     {
-        $full_folder_name = $_SERVER['DOCUMENT_ROOT'].'/gallery'.$folder_name;
+        $full_folder_name = self::$basepath.$folder_name;
         if(file_exists($full_folder_name))
         {
             echo 'FOLDER_NAME_BUZY_ERROR';
@@ -60,7 +62,7 @@ class GalleryController extends Controller
         else echo 'FOLDER_CREATION_ERROR';
     }
 
-    public function actionBathDelete($files_list){
+    public function actionDelete($files_list){
         $files_list = json_decode($files_list, TRUE);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
 
@@ -72,7 +74,9 @@ class GalleryController extends Controller
                 switch(filetype($full_name))
                 {
                     case "dir":
-                        if(!rmdir($full_name)) _delete_file_recursion($full_name);
+                        if(!rmdir($full_name)){
+                            $this->_delete_file_recursion($full_name);
+                        }
                         break;
                     case "file":
                         unlink($full_name);
@@ -102,7 +106,18 @@ class GalleryController extends Controller
         rmdir($path);
     }
 
+    public function actionUpload(){
+        if(count($_FILES) > 0)
+	{
+            foreach ($_FILES as $file){
+                copy($file['tmp_name'], self::$basepath.'/'.$file['name']);
+            }
+	}
+    }
 
+    /*public function actionDownload(){
+
+    }*/
 
 }
 

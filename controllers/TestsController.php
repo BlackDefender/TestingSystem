@@ -21,15 +21,15 @@ class TestsController extends Controller
     public function actionAdd(){
         $test_JSON = $_POST['test_JSON'];
         $test = json_decode($test_JSON, TRUE);
-        if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
+        if(json_last_error() != JSON_ERROR_NONE) {return 'JSON_PARSE_ERROR';}
 
         $transaction = Yii::$app->db->beginTransaction();
         try{
-            Yii::$app->db->createCommand()->insert('tests', ['category_id' => $test['category_id'], 'name'=>  htmlspecialchars($test['test_name']), 'start_date'=>date('Y-m-d G:i:s', $test['start_date']), 'end_date'=>date('Y-m-d G:i:s', $test['end_date']), 'is_private'=>$test['is_private']])->execute();
+            Yii::$app->db->createCommand()->insert('tests', ['category_id' => $test['category_id'], 'name'=>  strip_tags($test['test_name']), 'start_date'=>date('Y-m-d G:i:s', $test['start_date']), 'end_date'=>date('Y-m-d G:i:s', $test['end_date']), 'is_private'=>$test['is_private']])->execute();
             $test_id = Yii::$app->db->getLastInsertID();
 
             foreach ($test['blocks'] as $block) {
-                Yii::$app->db->createCommand()->insert('blocks', ['test_id' => $test_id, 'name'=>htmlspecialchars($block['name'])])->execute();
+                Yii::$app->db->createCommand()->insert('blocks', ['test_id' => $test_id, 'name'=>strip_tags($block['name'])])->execute();
                 $block_id = Yii::$app->db->getLastInsertID();
 
                 foreach ($block['questions'] as $question) {
@@ -42,10 +42,10 @@ class TestsController extends Controller
                 }
             }
             $transaction->commit();
-        }catch(Exception $e) {
-            //var_dump($e);
+            return '1';
+        }catch(Exception $e){
             $transaction->rollBack();
-            throw $e;
+            return 'DB_ERROR';
         }
     }
 
@@ -73,8 +73,49 @@ class TestsController extends Controller
         return Yii::$app->db->createCommand()->update('tests', ['is_in_trash' => false], array('in', 'id', $ids))->execute();
     }
 
-    public function actionGet($test_id = '__ERROR'){
-        if($test_id == '__ERROR') return $test_id;
+    public function actionGet($id = '__ERROR'){
+        $test_id = intval($id);
+        if($test_id <= 0) {return '__ERROR';}
+
+        $test = Yii::$app->db->createCommand('SELECT * FROM tests WHERE id='.$test_id)->queryAll();// находим тест
+        $test = $test[0];
+
+        $blocks = Yii::$app->db->createCommand('SELECT * FROM blocks WHERE test_id='.$test_id)->queryAll();// находим блоки теста
+
+        foreach ($blocks as $block_key => $block) {
+
+            $blocks[$block_key]['questions'] = Yii::$app->db->createCommand('SELECT * FROM questions WHERE block_id='.$block['id'])->queryAll();// к каждому блоку добавляем вопросы
+
+            foreach ($blocks[$block_key]['questions'] as $question_key => $question) {
+                // к вопросам добавляем варианты ответов, но только в том случае если это не свободный вариант ответа
+                if($blocks[$block_key]['questions'][$question_key]['type'] != 'text')
+                    $blocks[$block_key]['questions'][$question_key]['answers'] = Yii::$app->db->createCommand('SELECT * FROM answers WHERE question_id='.$question['id'])->queryAll();
+            }
+        }
+        $test['blocks'] = $blocks;
+
+        return json_encode($test);
+    }
+
+    public function actionCopy($id = '__ERROR'){
+        $dataJSON = $this->actionGet($id);
+        $data = json_decode($dataJSON, true);
+
+        $data['test_name'] = $data['name'] . ' копия';
+        $data['start_date'] = strtotime($data['start_date']);
+        $data['end_date'] = strtotime($data['end_date']);
+        $data['is_private'] = 1;
+        foreach ($data['blocks'] as $block_key => $block) {
+            foreach ($block['questions'] as $question_key => $question) {
+                $data['blocks'][$block_key] ['questions'][$question_key] ['name'] = htmlspecialchars_decode($question['name']);
+                foreach ($question['answers'] as $answer_key => $answer) {
+                    $data['blocks'][$block_key] ['questions'][$question_key] ['answers'][$answer_key] ['name'] = htmlspecialchars_decode($answer['name']);
+                }
+            }
+        }
+
+        $_POST['test_JSON'] = json_encode($data);
+        return $this->actionAdd();
     }
 
     public function actionChangePrivacy($id, $is_private) {
@@ -92,6 +133,11 @@ class TestsController extends Controller
             return Yii::$app->db->createCommand()->update('tests', ['category_id' => $category_id], 'id = '.$test_id)->execute();
     }
 
+    public function actionChangeDate($test_id, $start_date, $end_date){
+        $test_id = intval($test_id);
+        if($test_id <= 0) {return '__ERROR';}
+        return Yii::$app->db->createCommand()->update('tests', ['start_date'=>date('Y-m-d G:i:s', $start_date), 'end_date'=>date('Y-m-d G:i:s', $end_date)], 'id = '.$test_id)->execute();
+    }
 
 
     /************************** НАБОР ФУНКЦИЙ ДЛЯ КЛИЕНТА **************************/

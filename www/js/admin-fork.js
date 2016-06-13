@@ -6,9 +6,6 @@ jQuery(function($){
             helpers.getCategoriesList(init);
             return ;
         }
-        // задаем глобальный счетчик
-        helpers.counter =  helpers.getCounter();
-
 
         // для затравки показываем список имеющихся тестов
         tests.get();

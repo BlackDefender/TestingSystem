@@ -16,7 +16,8 @@ class AdminController extends Controller
     public function actionIndex()
     {
         $this->layout = 'admin';
-        return $this->render('index');
+        //return $this->render('index');
+        return $this->render('fork');
     }
     public function actionFork()
     {

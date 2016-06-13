@@ -11,11 +11,23 @@ jQuery(function($){
         getCategoriesList:function(cb){// получает список категорий и вызывает переданную функцию
             $.get(globalVars.baseUrl+'categories',function(data){
                 globalVars.categoriesList = JSON.parse(data);
+                globalVars.categoriesListAssociated = [];
                 globalVars.categoriesList.forEach(function(item){
                     globalVars.categoriesListAssociated[item['id']] = item['name'];
                 });
                 if(cb !== undefined) cb();
             });
+        },
+        getTestsList: function(cb){
+            $.get(globalVars.baseUrl+'tests')
+                .done(function(data){
+                    globalVars.testsList = JSON.parse(data);
+                    globalVars.testsListAssociated = [];
+                    globalVars.testsList.forEach(function(item){
+                        globalVars.testsListAssociated[item['id']] = item;
+                    });
+                    if(cb !== undefined) cb();
+                });
         },
         getCounter: function (){// возвращает функцию-счетчик
             var count = 0;
@@ -23,7 +35,7 @@ jQuery(function($){
                 return count++;
             };
         },
-        counter: null, //уже готовый счетчик. устанавливается в функции init().
+        counter: null,
         getSelectedIds: function(tableSelector){ // возвращет массив айдишников выбранных тестов в списке
             if(tableSelector === undefined) tableSelector = 'table'; //для ленивых
             var $selectedItems = globalVars.$workplace.find(tableSelector + ' tbody tr td:first-child input[type="checkbox"]:checked');
@@ -96,21 +108,23 @@ jQuery(function($){
             $target.parents('td').find('input[type="text"]').css({'display':'block'}).focus();// показываем input
         },
         renameEnd: function($target){
-            var newCategoryName = $target.val();
+            var newName = $target.val();
             var $label = $target.parents('td').find('label');
-            if($label.html() === newCategoryName){
+            if($label.html() === newName){
                 $target.css({'display':'none'});// убираем input
-                $label.css({'display':'block'});// меняем значение label и показываем его
+                $label.css({'display':'block'});// показываем label
+                return ;
             }
-            var categoryId = $target.parents('tr').attr('data-id');// находим id категории
+            var itemId = $target.parents('tr').attr('data-id');// находим id
 
-            $.get(globalVars.baseUrl+globalVars.currentController+'/rename',{'id':categoryId, 'new_name':newCategoryName})
+            $.get(globalVars.baseUrl+globalVars.currentController+'/rename',{'id':itemId, 'new_name':newName})
                 .done(function(data){
                     if(data == 1){
                         $target.css({'display':'none'});// убираем input
-                        $label.html(newCategoryName).css({'display':'block'});// меняем значение label и показываем его
+                        $label.html(newName).css({'display':'block'});// меняем значение label и показываем его
                         helpers.changesResultAnimation($target, true);
-                        helpers.getCategoriesList();
+                        if(globalVars.currentController === 'categories') helpers.getCategoriesList();
+                        if(globalVars.currentController === 'tests') helpers.getTestsList();
                     }
                     else{
                         helpers.changesResultAnimation($target, false);
@@ -118,16 +132,32 @@ jQuery(function($){
                 })
                 .fail(function(arg){
                     helpers.changesResultAnimation($target, false);
-                    console.log('fail',arg);
+                    //console.log('fail', arg);
                 });
-
         },
         renameRollBack: function($target){
             $target.css({'display':'none'});// убираем input
             $target.parents('td').find('label').css({'display':'block'});// показываем label
             $target.val($target.parents('td').find('label').html());
+        },
+        filterInput: function(e,regexp){
+            e=e || window.event;
+            var target=e.target || e.srcElement;
+            var isIE=document.all;
+            if (target.tagName.toUpperCase()=='INPUT'){
+                var code=isIE ? e.keyCode : e.which;
+                if (code<32 || e.ctrlKey || e.altKey) return true;
+
+                var char=String.fromCharCode(code);
+                if (!regexp.test(char)) return false;
+            }
+            return true;
+        },
+        stripTags: function(str){ // Strip HTML and PHP tags from a string
+            return str.replace(/<\/?[^>]+>/gi, '');
         }
     };
+    helpers.counter =  helpers.getCounter();
 
     function promptOk(){
         var data = $('#helpers-prompt-input').val();
@@ -135,7 +165,6 @@ jQuery(function($){
         $('#helpers-prompt-input').val('');
         prompt_cb(data);
     }
-
 
     $('#helpers-prompt-ok-btn').bind('click', function(){
         promptOk();
@@ -147,6 +176,7 @@ jQuery(function($){
         else
             confirm_cb_ok(confirm_cb_ok_params);
     });
+
     $('#helpers-confirm-cancel-btn').bind('click', function(){
         if(typeof confirm_cb_cancel === 'function'){
             if(confirm_cb_cancel_params === undefined || confirm_cb_cancel_params === null || confirm_cb_cancel_params === '')

@@ -6,7 +6,7 @@ body{
     padding: 0;
     margin: 0 0 20px;
 }
-#work-space{
+#workplace{
     width: 100%;
     height: auto;
     background-color: transparent;
@@ -56,6 +56,19 @@ body{
 .add-new-test--questions-block--question-wrap{
     margin: 15px 0;
 }
+.add-new-test--questions-block--question-img,
+.add-new-test--questions-block--question-answer-img{
+    width: 37px;
+    height: 37px;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    margin: 0 10px 0 5px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-image: url(../img/image-add.png);
+}
 .add-new-test--questions-block-toolbar{
     text-align: right;
 }
@@ -72,16 +85,28 @@ body{
 .add-new-test--questions-block--question-add-answer{
     margin: 15px 0 0;
 }
-.add-new-test--questions-block--question-answer-delete{
-    margin: 0 0 0 15px;
-}
+.tests-list-item-start-date-input,
+.tests-list-item-end-date-input,
 .list-edit-field{
     display: none;
 }
+
+.tests-list-item-start-date-input,
+.tests-list-item-end-date-input{
+    width: 100px;
+}
+
+.tests-list-item-start-date-label,
+.tests-list-item-end-date-label,
 .list-item-label{
     width:100%;
     height: 100%;
     padding: 15px 0 15px 21px;
     margin: -8px;
     font-weight: 400;
+}
+
+.test-results-canvas-holder{
+    width: 600px;
+    height: 400px;
 }

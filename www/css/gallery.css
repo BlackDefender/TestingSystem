@@ -1,0 +1,83 @@
+#gallery{
+    /*width: 800px;
+    height: 500px;
+    border: 1px solid #aaa;*/
+    z-index: 1045;
+}
+#gallery-toolbar{
+    /*height: 100px;
+    border-bottom: 1px solid #aaa;
+    margin: 0;*/
+}
+#gallery-toolbar-nav{
+    margin: 10px 0 0;
+}
+.gallery-go-back{
+    float: left;
+}
+.gallery-adress-string-wrap{
+    margin: 0 0 0 45px;
+}
+#gallery-workplace-wrap{
+    display: table;
+    width: 100%;
+    min-height: 300px;
+}
+#gallery-workplace{
+    margin: 0;
+    padding: 0;
+    width: 66.7%;
+    overflow: auto;
+    display: table-cell;
+    vertical-align: top;
+}
+#gallery-workplace li{
+    list-style: none;
+    display: block;
+    width: 100px;
+    height: 150px;
+    float: left;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 5px;
+    position: relative;
+    overflow: hidden;
+}
+#gallery-workplace li input[type="checkbox"]{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+#gallery-workplace li .thumb{
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100px;
+    margin: 5px;
+}
+#gallery-workplace li .file-name{
+    border-top: 1px solid #ddd;
+    padding: 3px;
+}
+#gallery-details{
+    width: 33.3%;
+    border-left: 1px solid #dedede;
+    position: relative;
+    display: table-cell;
+    vertical-align: top;
+}
+#gallery-details .thumb{
+    width: 80%;
+    padding-top: 80%;
+    margin: 10%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+#gallery-details .buttons-holder{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+}
