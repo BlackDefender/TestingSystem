@@ -13,8 +13,8 @@ class ResultsController extends Controller
 {
     public $enableCsrfValidation = false;
 
-    public function actionIndex($test_id)
-    {
+    public function actionIndex($test_id){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $test_id = intval($test_id);
         if($test_id <= 0) {return 'WRONG_ID_ERROR';}
         $test_results = (new \yii\db\Query())
@@ -23,7 +23,7 @@ class ResultsController extends Controller
             ->all();
 
         foreach ($test_results as $key => $result) {
-            $test_results[$key]['responses'] = Yii::$app->db->createCommand('SELECT * FROM tests_results_responses WHERE test_result_id='.$result['id'])->queryAll();
+            $test_results[$key]['responses'] = Yii::$app->db->createCommand('SELECT * FROM tests_results_responses WHERE test_result_id='.$result['id'].' ORDER BY question_id ASC')->queryAll();
         }
 
         return json_encode($test_results);

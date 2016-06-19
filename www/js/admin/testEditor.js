@@ -262,7 +262,7 @@ jQuery(function($){
                 $questions.each(function(){
                     var $question = $(this);
                     var questionName = $question.find('.add-new-test--questions-block--question-name').val(),
-                        questionImg = $question.find('.add-new-test--questions-block--question-img').attr('data-url'),
+                        questionImg = $question.find('.add-new-test--questions-block--question-img').attr('data-url') || '',
                         questionType = $question.find('.add-new-test--questions-block--test-type-select').val();
 
                     if(questionName === '' && questionImg === ''){
@@ -286,7 +286,7 @@ jQuery(function($){
                     $answers.each(function(){
                         var answerName = $(this).find('input[type="text"]').val(),
                             answerIsTrue = false,
-                            answerImg = $(this).find('.add-new-test--questions-block--question-answer-img').attr('data-url');
+                            answerImg = $(this).find('.add-new-test--questions-block--question-answer-img').attr('data-url') || '';
                         if(answerName === '' && answerImg === ''){
                             dataValidationError = true;
                             helpers.alert('Ошибка проверки теста', 'Один из ответов был оставлен пустым.');
@@ -336,6 +336,7 @@ jQuery(function($){
 
             //return ;
             if(itIsNewTest){
+                console.log(testObject);
             $.post(globalVars.baseUrl+'tests/add',{'test_JSON': JSON.stringify(testObject)})
                     .done(function(data){
                         if(data == 1){
@@ -381,7 +382,7 @@ jQuery(function($){
                         }
                     })
                     .fail(function(){
-                        helpers.alert('Ошибка', 'Не удалось создать тест.');
+                        helpers.alert('Ошибка', 'Не удалось изменить тест.');
                     });
 
             }

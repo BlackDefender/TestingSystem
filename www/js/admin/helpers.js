@@ -22,6 +22,11 @@ jQuery(function($){
             $.get(globalVars.baseUrl+'tests')
                 .done(function(data){
                     globalVars.testsList = JSON.parse(data);
+                    if(globalVars.categoriesListAssociated.length > 0){
+                        globalVars.testsList.forEach(function(item){
+                            item['category_name'] = globalVars.categoriesListAssociated[item['category_id']];
+                        });
+                    }
                     globalVars.testsListAssociated = [];
                     globalVars.testsList.forEach(function(item){
                         globalVars.testsListAssociated[item['id']] = item;

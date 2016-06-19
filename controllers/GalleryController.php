@@ -12,16 +12,15 @@ use app\models\ContactForm;
 class GalleryController extends Controller
 {
     public $enableCsrfValidation = false;
-
     private static $basepath = '/home/synerg00/synergy.od.ua/www/gallery';
 
-    public function actionIndex()
-    {
-        //$this->layout = 'admin';
-        //return $this->render('index');
+    public function actionIndex(){
+
     }
 
+
     public function actionDir($dir = '/'){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         if($dir == '') $dir == '/';
 
         $path = self::$basepath.$dir;
@@ -50,8 +49,8 @@ class GalleryController extends Controller
         return json_encode($sorted_list);
     }
 
-    public function actionCreateFolder($folder_name)
-    {
+    public function actionCreateFolder($folder_name){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $full_folder_name = self::$basepath.$folder_name;
         if(file_exists($full_folder_name))
         {
@@ -63,6 +62,7 @@ class GalleryController extends Controller
     }
 
     public function actionDelete($files_list){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $files_list = json_decode($files_list, TRUE);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
 
@@ -86,8 +86,7 @@ class GalleryController extends Controller
         }
     }
 
-    function _delete_file_recursion($path)
-    {
+    private function _delete_file_recursion($path){
         $file_list = scandir($path);
         unset($file_list[0]);
         unset($file_list[1]);
@@ -107,6 +106,7 @@ class GalleryController extends Controller
     }
 
     public function actionUpload(){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         if(count($_FILES) > 0)
 	{
             foreach ($_FILES as $file){
@@ -114,11 +114,6 @@ class GalleryController extends Controller
             }
 	}
     }
-
-    /*public function actionDownload(){
-
-    }*/
-
 }
 
 

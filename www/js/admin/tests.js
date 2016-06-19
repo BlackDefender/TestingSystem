@@ -34,6 +34,16 @@ jQuery(function($){
 
             globalVars.$currentTaskToolbar.append( mainListIsShowingNow ? mainListToolbarTemplate : trashToolbarTemplate);
 
+            $("#tests-list").tablesorter({
+                headers:{
+                    0:{sorter: false},
+                    3: { dateFormat: "ddmmyyyy" },
+                    4: { dateFormat: "ddmmyyyy" },
+                    5:{sorter: false},
+                    6:{sorter: false}
+                }
+            });
+
         }
 
         function getTestResults($target){
@@ -164,6 +174,9 @@ jQuery(function($){
                         if(data == 1){
                             helpers.changesResultAnimation($target, true);
                             helpers.getTestsList();
+                            // обновляем категорию для сортировщика
+                            $target.parents('tr').find('.hidden-category-name').html(globalVars.categoriesListAssociated[categoryId]);
+                            $('#tests-list tbody').trigger('update');
                         }
                     })
                     .fail(function(){

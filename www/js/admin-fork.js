@@ -10,6 +10,9 @@ jQuery(function($){
         // для затравки показываем список имеющихся тестов
         tests.get();
 
+        window.onbeforeunload = function() {
+            if(globalVars.currentController === 'testEditor') return 'Не сохраненные данные могут быть утеряны!';
+        };
 
         // обработчики для кнопок тулбара
         //$('.add-test-btn').bind('click', testEditor.add);

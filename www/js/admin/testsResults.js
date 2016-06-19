@@ -63,6 +63,23 @@ jQuery(function($){
             $('#test-results--minimal-grade-filter').val(minGradeFilter);
             $('#test-results--maximal-count-of-items-filter').val(maxCountFilter);
 
+            $.get(globalVars.baseUrl+'tests/get-questions',{'test_id': testId})
+                .done(function(data){
+                    console.log('inside');
+                    var questions = JSON.parse(data);
+                    $('.test-results-question > span').each(function(index){
+                        var content = (questions[index]['name'] === '') ? '' : '<div>'+questions[index]['name']+'</div>';
+                            content += (questions[index]['img'] === '') ? '' : '<img style="max-width:100%" src="'+questions[index]['img']+'">';
+                        $(this).attr({
+                            'data-toggle': 'tooltip',
+                            'data-placement':'bottom',
+                            'title': content
+                        });
+                        //data-toggle="tooltip" data-placement="bottom" ="
+                    });
+                    $('.test-results-question > span[data-toggle="tooltip"]').tooltip({html: true});
+                });
+
         }
 
         function renderChart(){
@@ -93,15 +110,17 @@ jQuery(function($){
                 type: 'line',
                 data: {
                     datasets: [{
-                        label: 'Распределение результатов тестирования',
                         data: chartData
                     }]
                 },
                 options: {
-                    /*title: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
                         display: true,
-                        text: 'Custom Chart Title'
-                    },*/
+                        text: 'Распределение результатов тестирования'
+                    },
                     scales: {
                         xAxes: [{
                             type: 'linear',

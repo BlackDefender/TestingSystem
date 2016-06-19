@@ -2,6 +2,9 @@
 body{
     padding: 0;
 }
+.logout{
+    padding: 8px 0;
+}
 .toolbar{
     padding: 0;
     margin: 0 0 20px;
@@ -105,7 +108,38 @@ body{
     font-weight: 400;
 }
 
+
+/*  РЕЗУЛЬТАТЫ ТЕСТИРОВАНИЯ  */
+.table > thead > tr > th.test-results-question{
+    padding: 0;
+}
+.test-results-question > span{
+    display: block;
+    height: 38px;
+    line-height: 38px;
+    display: inline-block;
+    width: 100%;
+    /*text-align: center;*/
+    padding: 0 0 0 5px;
+}
+.tooltip-inner div{
+    margin: 5px;
+}
+.tooltip-inner img{
+    max-width: 90%;
+    margin: 5px 0;
+}
+
 .test-results-canvas-holder{
-    width: 600px;
-    height: 400px;
+    width: 80%;
+    padding-top: 50%;
+    position: relative;
+    margin: auto;
+}
+.test-results-canvas-holder > div{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }

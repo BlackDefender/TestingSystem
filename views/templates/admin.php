@@ -63,7 +63,7 @@
 </script>
 
 <script type="text/template" id="tests-list-base-template">
-    <table id="tests-list" class="table table-bordered table-hover">
+    <table id="tests-list" class="table table-bordered table-hover tablesorter">
         <thead>
             <tr class="bg-info text-muted">
                 <th><input type="checkbox" class="select-all-items"></th>
@@ -87,6 +87,7 @@
             <input class="list-edit-field form-control" type="text" value="${item['name']}">
         </td>
         <td>
+            <span class="hidden hidden-category-name">${item['category_name']}</span>
             <select  class="form-control test-list--test-category">
                 <% _.forEach(categories, function(category){
                     if(item['category_id']== category['id']){
@@ -128,7 +129,7 @@
 
 
 
-<!---------------------------------------- ШАБЛОНЫ ДОБАВЛЕНИЯ ТЕСТА --------------------------------------->
+<!---------------------------------------- ШАБЛОНЫ РЕДАКТОРА ТЕСТОВ --------------------------------------->
 <script type="text/template" id="add-test-template">
     <aside class="btn-group-vertical add-new-test--aside-toolbar">
         <div class="btn btn-primary add-new-test--add-block" title="Добавить раздел"><i class="fa fa-pause" style="transform:rotate(90deg);"></i></div>
@@ -201,14 +202,24 @@
 <!------------------------------------------------------------------------------------------------------------->
 
 
-
 <!---------------------------------------- ШАБЛОНЫ РЕЗУЛЬТАТОВ ТЕСТИРОВАНИЯ --------------------------------------->
 <script type="text/template" id="test-results-base-template">
-    <section>
-        Фильтры:<br>
-        Минимальный балл:<input type="text" id="test-results--minimal-grade-filter" onkeypress="return helpers.filterInput(event,/[\d]/)"><br>
-        Количество записей:<input type="text" id="test-results--maximal-count-of-items-filter" onkeypress="return helpers.filterInput(event,/[\d]/)">
+    <section class="form-horizontal">
+        <h3>Фильтры:</h3>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Минимальный балл:</label>
+            <div class="col-sm-1">
+                <input type="text" id="test-results--minimal-grade-filter" onkeypress="return helpers.filterInput(event,/[\d]/)" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Количество записей:</label>
+            <div class="col-sm-1">
+                <input type="text" id="test-results--maximal-count-of-items-filter" onkeypress="return helpers.filterInput(event,/[\d]/)" class="form-control">
+            </div>
+        </div>
     </section>
+
     <table id="test-results-list" class="table table-bordered table-hover tablesorter">
         <thead>
             <tr class="bg-info text-muted">
@@ -218,7 +229,7 @@
                 <th>Телефон</th>
                 <th>Email</th>
                 <th>Итоговая оценка</th>
-                    <% for(var i=1; i <= count; ++i){%> <th><%= i %></th> <%} %>
+                    <% for(var i=1; i <= count; ++i){%> <th class="test-results-question"><span><%= i %></span></th> <%} %>
             </tr>
         </thead>
         <tbody></tbody>
@@ -247,7 +258,9 @@
 </script>
 <script type="text/template" id="test-results-chart-template">
     <div class="test-results-canvas-holder">
-	<canvas id="test-results-chart" width="600" height="400"></canvas>
+        <div>
+            <canvas id="test-results-chart" width="600" height="400"></canvas>
+        </div>
     </div>
 </script>
 <!------------------------------------------------------------------------------------------------------------->

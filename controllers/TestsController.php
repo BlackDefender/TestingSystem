@@ -14,11 +14,13 @@ class TestsController extends Controller
     public $enableCsrfValidation = false;
 
     public function actionIndex(){// список тестов для админа
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $tests_list = Yii::$app->db->createCommand('SELECT id, category_id, name, DATE_FORMAT(start_date, \'%d.%m.%Y\') AS start_date_formatted, DATE_FORMAT(end_date, \'%d.%m.%Y\') AS end_date_formatted, is_private, is_in_trash FROM tests')->queryAll();
         return json_encode($tests_list);
     }
 
     public function actionAdd(){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $test_JSON = $_POST['test_JSON'];
         $test = json_decode($test_JSON, TRUE);
         if(json_last_error() != JSON_ERROR_NONE) {return 'JSON_PARSE_ERROR';}
@@ -33,11 +35,11 @@ class TestsController extends Controller
                 $block_id = Yii::$app->db->getLastInsertID();
 
                 foreach ($block['questions'] as $question) {
-                    Yii::$app->db->createCommand()->insert('questions', ['test_id' => $test_id, 'block_id' => $block_id, 'name'=>htmlspecialchars($question['name']), 'img' => $question['img'], 'type' => $question['type']])->execute();
+                    Yii::$app->db->createCommand()->insert('questions', ['test_id' => $test_id, 'block_id' => $block_id, 'name'=>$this->_angleBracketsToHTMLEntities($question['name']), 'img' => $question['img'], 'type' => $question['type']])->execute();
                     $question_id = Yii::$app->db->getLastInsertID();
 
                     foreach ($question['answers'] as $answer) {
-                        Yii::$app->db->createCommand()->insert('answers', ['question_id' => $question_id, 'name'=>htmlspecialchars($answer['name']), 'img' => $answer['img'], 'is_true' => ($answer['is_true'] == 'true')])->execute();
+                        Yii::$app->db->createCommand()->insert('answers', ['question_id' => $question_id, 'name'=>$this->_angleBracketsToHTMLEntities($answer['name']), 'img' => $answer['img'], 'is_true' => ($answer['is_true'] == 'true')])->execute();
                     }
                 }
             }
@@ -50,6 +52,7 @@ class TestsController extends Controller
     }
 
     public function actionEdit(){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $test_id = intval($_POST['id']);
         if($test_id <= 0) {return 'NO_TEST_ID_ERROR';}
         $queryObj = new \yii\db\Query();
@@ -85,17 +88,20 @@ class TestsController extends Controller
     }
 
     public function actionDelete($ids_JSON){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $ids = json_decode($ids_JSON);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         return Yii::$app->db->createCommand()->delete('tests', array('in', 'id', $ids))->execute();
     }
 
     public function actionRename($id = -1, $new_name = 'NO_NAME_ERROR'){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         if($id <= 0 || $new_name == 'NO_NAME_ERROR') return '__ERROR';
         return Yii::$app->db->createCommand()->update('tests', ['name' => $new_name],['id'=>  intval($id)])->execute();
     }
 
     public function actionTrash($ids_JSON, $to_trash){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $ids = json_decode($ids_JSON);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         $to_trash = $to_trash === 'true';
@@ -103,12 +109,14 @@ class TestsController extends Controller
     }
 
     public function actionRemoveFromTrash($ids_JSON){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $ids = json_decode($ids_JSON);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         return Yii::$app->db->createCommand()->update('tests', ['is_in_trash' => false], array('in', 'id', $ids))->execute();
     }
 
     public function actionGet($id = 'NO_TEST_ID_ERROR'){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $test_id = intval($id);
         if($test_id <= 0) {return 'NO_TEST_ID_ERROR';}
 
@@ -118,11 +126,14 @@ class TestsController extends Controller
 
         $blocks = Yii::$app->db->createCommand('SELECT * FROM blocks WHERE test_id='.$test_id)->queryAll();// находим блоки теста
         foreach ($blocks as $block_key => $block) {
-
             $blocks[$block_key]['questions'] = Yii::$app->db->createCommand('SELECT * FROM questions WHERE block_id='.$block['id'])->queryAll();// к каждому блоку добавляем вопросы
             foreach ($blocks[$block_key]['questions'] as $question_key => $question) {
+                $blocks[$block_key]['questions'][$question_key]['name'] = $this->_HTMLEntitiesToangleBrackets($blocks[$block_key]['questions'][$question_key]['name']);
                 // к вопросам добавляем варианты ответов
                 $blocks[$block_key]['questions'][$question_key]['answers'] = Yii::$app->db->createCommand('SELECT * FROM answers WHERE question_id='.$question['id'])->queryAll();
+                foreach ($blocks[$block_key]['questions'][$question_key]['answers'] as $answer_key => $answer){
+                    $blocks[$block_key] ['questions'][$question_key] ['answers'][$answer_key] ['name'] = $this->_HTMLEntitiesToangleBrackets($blocks[$block_key] ['questions'][$question_key] ['answers'][$answer_key] ['name']);
+                }
             }
         }
         $test['blocks'] = $blocks;
@@ -131,18 +142,19 @@ class TestsController extends Controller
     }
 
     public function actionCopy($id = '__ERROR'){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $dataJSON = $this->actionGet($id);
         $data = json_decode($dataJSON, true);
 
         $data['test_name'] = $data['name'] . ' копия';
-        $data['start_date'] = strtotime($data['start_date']);
-        $data['end_date'] = strtotime($data['end_date']);
+        $data['start_date'] = strtotime($data['start_date_formatted']);
+        $data['end_date'] = strtotime($data['end_date_formatted']);
         $data['is_private'] = 1;
         foreach ($data['blocks'] as $block_key => $block) {
             foreach ($block['questions'] as $question_key => $question) {
-                $data['blocks'][$block_key] ['questions'][$question_key] ['name'] = htmlspecialchars_decode($question['name']);
+                $data['blocks'][$block_key] ['questions'][$question_key] ['name'] = $this->_angleBracketsToHTMLEntities($question['name']);
                 foreach ($question['answers'] as $answer_key => $answer) {
-                    $data['blocks'][$block_key] ['questions'][$question_key] ['answers'][$answer_key] ['name'] = htmlspecialchars_decode($answer['name']);
+                    $data['blocks'][$block_key] ['questions'][$question_key] ['answers'][$answer_key] ['name'] = $this->_angleBracketsToHTMLEntities($answer['name']);
                 }
             }
         }
@@ -152,12 +164,14 @@ class TestsController extends Controller
     }
 
     public function actionChangePrivacy($id, $is_private) {
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $test_id = intval($id);
         if($test_id <= 0) {return '__ERROR';}
         return Yii::$app->db->createCommand()->update('tests', ['is_private' => ($is_private === 'true')], 'id = '.$test_id)->execute();
     }
 
     public function actionChangeCategory($test_id, $new_category_id) {
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $category_id = intval($new_category_id);
         if($category_id <= 0) {return '__ERROR';}
         $count = Yii::$app->db->createCommand('SELECT COUNT(*) FROM categories WHERE id='.$category_id)->queryScalar();
@@ -167,9 +181,30 @@ class TestsController extends Controller
     }
 
     public function actionChangeDate($test_id, $start_date, $end_date){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $test_id = intval($test_id);
         if($test_id <= 0) {return '__ERROR';}
         return Yii::$app->db->createCommand()->update('tests', ['start_date'=>date('Y-m-d G:i:s', $start_date), 'end_date'=>date('Y-m-d G:i:s', $end_date)], 'id = '.$test_id)->execute();
+    }
+
+    public function actionGetQuestions($test_id){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
+        $test_id = intval($test_id);
+        if($test_id <= 0) {return 'NO_TEST_ID_ERROR';}
+        $questions = Yii::$app->db->createCommand('SELECT id, name, img FROM questions WHERE test_id='.$test_id.' ORDER BY id ASC')->queryAll();
+        return json_encode($questions);
+    }
+
+    // урезанный аналог htmlspecialchars
+    private function _angleBracketsToHTMLEntities($str){
+        $str = str_replace('<', '&lt;', $str);
+        $str = str_replace('>', '&gt;', $str);
+        return $str;
+    }
+    private function _HTMLEntitiesToangleBrackets($str){
+        $str = str_replace('&lt;', '<', $str);
+        $str = str_replace('&gt;', '>', $str);
+        return $str;
     }
 
 
@@ -217,10 +252,10 @@ class TestsController extends Controller
         try{
             Yii::$app->db->createCommand()->insert('tests_results',
                 ['test_id' => intval($test_result['test_id']),
-                'first_name'=>  htmlspecialchars($test_result['first_name']),
-                'last_name'=>  htmlspecialchars($test_result['last_name']),
-                'tel'=>htmlspecialchars($test_result['tel']),
-                'email'=>htmlspecialchars($test_result['email'])])->execute();
+                'first_name'=>  strip_tags($test_result['first_name']),
+                'last_name'=>  strip_tags($test_result['last_name']),
+                'tel'=> strip_tags($test_result['tel']),
+                'email'=> strip_tags($test_result['email'])])->execute();
 
             $test_result_id = Yii::$app->db->getLastInsertID();
 

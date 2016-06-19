@@ -20,6 +20,7 @@ class CategoriesController extends Controller
     }
 
     public function actionAdd($name = 'NO_NAME_ERROR'){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         if($name == 'NO_NAME_ERROR') return $name;
         $category_exists = (new \yii\db\Query())
             ->select(['id'])
@@ -34,17 +35,20 @@ class CategoriesController extends Controller
     }
 
     public function actionDelete($ids_JSON){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $ids = json_decode($ids_JSON);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         return Yii::$app->db->createCommand()->delete('categories', array('in', 'id', $ids))->execute();
     }
 
     public function actionRename($id = -1, $new_name = 'NO_NAME_ERROR'){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         if($id <= 0 || $new_name == 'NO_NAME_ERROR') return '__ERROR';
         return Yii::$app->db->createCommand()->update('categories', ['name' => $new_name],['id'=>  intval($id)])->execute();
     }
 
     public function actionTrash($ids_JSON, $to_trash){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $ids = json_decode($ids_JSON);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         $to_trash = $to_trash === 'true';
@@ -52,6 +56,7 @@ class CategoriesController extends Controller
     }
 
     public function actionRemoveFromTrash($ids_JSON){
+        if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         $ids = json_decode($ids_JSON);
         if(json_last_error() != JSON_ERROR_NONE) {return '__ERROR';}
         return Yii::$app->db->createCommand()->update('categories', ['is_in_trash' => false], array('in', 'id', $ids))->execute();
