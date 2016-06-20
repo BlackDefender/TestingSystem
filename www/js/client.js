@@ -298,11 +298,15 @@ jQuery(function($){
                     if($blocksCollection.iterator === $blocksCollection.length){
                         $('#test-next-block-btn').val(buttonTexts.done);
                     }
-                    //если блок был последним отсылаем результат
+                    //прокручиваем окно вверх
+                    $(window).scrollTop($('.test-name').offset().top);
                 }
                 else{
+                    //если блок был последним отсылаем результат
                     if (!userDataIsValid()){
                         helpers.alert ('', 'Заполните пожалуйста данные о себе');
+                        // прокручиваем на блок с информацией о клиенте
+                        $(window).scrollTop($('.info').offset().top);
                         return ;
                     }
                     sendResult();

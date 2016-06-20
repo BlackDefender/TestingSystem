@@ -20,7 +20,12 @@ AppAsset::register($this);
         <title><?= Html::encode($this->title) ?></title>
         <link href="image/dataart16x16.png" rel="shortcut icon" type="image/png">
 
-        <?php $this->head() ?>
+        <?php
+        // подключаем файлы с шаблонами
+        require_once dirname(__FILE__).'/../templates/client.php';
+        $this->head();
+
+        ?>
     </head>
     <body style="background: gray">
         <?php $this->beginBody() ?>
@@ -30,12 +35,18 @@ AppAsset::register($this);
                 <a id="header-logo" href="/"></a>
                 <a id="header-mail" href="mailto:info@dataart.com"></a>
             </header>
-            <?= $content ?>
+            <main>
+                <?= $content ?>
+            </main>
             <footer>
                 <img src="img/image/synergy_inc_blue.png" alt="Логотип Синергия">
             </footer>
         </div>
-        <?php $this->endBody() ?>
+        <?php
+        // подключаем файлы с шаблонами
+        require_once dirname(__FILE__).'/../templates/helpers.php';
+        $this->endBody();
+        ?>
     </body>
 </html>
 <?php $this->endPage() ?>

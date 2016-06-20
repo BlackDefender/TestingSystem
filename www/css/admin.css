@@ -58,6 +58,10 @@ body{
 .add-new-test--questions-block--question-wrap{
     margin: 15px 0;
 }
+.add-new-test--questions-block--question-name{
+    resize: vertical;
+}
+
 .add-new-test--questions-block--question-img,
 .add-new-test--questions-block--question-answer-img{
     width: 37px;

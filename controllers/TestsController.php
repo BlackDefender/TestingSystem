@@ -39,7 +39,7 @@ class TestsController extends Controller
                     $question_id = Yii::$app->db->getLastInsertID();
 
                     foreach ($question['answers'] as $answer) {
-                        Yii::$app->db->createCommand()->insert('answers', ['question_id' => $question_id, 'name'=>$this->_angleBracketsToHTMLEntities($answer['name']), 'img' => $answer['img'], 'is_true' => ($answer['is_true'] == 'true')])->execute();
+                        Yii::$app->db->createCommand()->insert('answers', ['question_id' => $question_id, 'name'=>$this->_angleBracketsToHTMLEntities($answer['name']), 'img' => $answer['img'], 'is_true' => ($answer['is_true'] == 'true' || $answer['is_true'] == 1)])->execute();
                     }
                 }
             }

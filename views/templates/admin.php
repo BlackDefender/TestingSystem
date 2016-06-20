@@ -184,7 +184,7 @@
 <script type="text/template" id="add-test-question-template">
     <div class="clearfix add-new-test--questions-block--question-wrap">
         <div class="row">
-            <div class="col-xs-8"><input type="test" placeholder="Вопрос" class="form-control add-new-test--questions-block--question-name"></div>
+            <div class="col-xs-8"><textarea type="test" placeholder="Вопрос" class="form-control add-new-test--questions-block--question-name"></textarea></div>
             <div class="col-xs-4 form-inline">Тип вопроса:
                 <select class="form-control add-new-test--questions-block--test-type-select">
                     <option value="radio">radio</option>

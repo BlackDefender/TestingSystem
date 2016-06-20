@@ -69,7 +69,7 @@
 	      <% if(block['name'] !== ""){ %> <legend>${block['name']}</legend> <% } %>
 	      <% _.forEach(block['questions'], function(question){%>
 	        <div class="question invalid" data-input-name="question_${question['id']}" data-question-type="${question['type']}" data-question-id="${question['id']}">
-		  <% if(question['name'] !== ''){ %> <h4>${question['name']}</h4> <% } %>
+		  <% if(question['name'] !== ''){ %> <h4 class="test-question">${question['name']}</h4> <% } %>
 		  <% if(question['img'] !== ''){ %> <img class="test-question-image" src="${question['img']}"> <% } %>
 		  <% if(question['type'] === 'text'){ %>
 		    <label><input type="text" name="question_${question['id']}"></label>

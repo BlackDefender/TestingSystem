@@ -18,12 +18,15 @@
   margin: 5% auto;
 }
 .finish_column-1 {
-  line-height:100px;
-  color: #34495e;
-  font-weight: bold;
-  font-size: 1.1em;
+    color: #34495e;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 15px;
 }
-
+.finish_column-1 > a{
+    display: block;
+    margin: 23px 0;
+}
 .button1 {
     border-radius: 10px;
     height: 55px;

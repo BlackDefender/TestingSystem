@@ -158,6 +158,11 @@ fieldset > div {
     margin-bottom: 10px;
     box-shadow: 5px 5px 5px 0px grey;
 }
+.test-question{
+    font-size: 16px;
+    line-height: 24px;
+    white-space: pre-wrap;
+}
 fieldset img {
     width: 100px;
 }
