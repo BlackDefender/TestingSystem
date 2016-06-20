@@ -97,7 +97,7 @@ class TestsController extends Controller
     public function actionRename($id = -1, $new_name = 'NO_NAME_ERROR'){
         if (\Yii::$app->user->isGuest){return AdminController::$guest_message;}
         if($id <= 0 || $new_name == 'NO_NAME_ERROR') return '__ERROR';
-        return Yii::$app->db->createCommand()->update('tests', ['name' => $new_name],['id'=>  intval($id)])->execute();
+        return Yii::$app->db->createCommand()->update('tests', ['name' => $new_name],['id' => intval($id)])->execute();
     }
 
     public function actionTrash($ids_JSON, $to_trash){
@@ -221,9 +221,14 @@ class TestsController extends Controller
         $test_id = intval($id);
         if($test_id <= 0) {return '__ERROR';}
 
-        $test = Yii::$app->db->createCommand('SELECT id, name FROM tests WHERE id='.$test_id)->queryAll();// находим тест
+        $test = Yii::$app->db->createCommand('SELECT id, name, UNIX_TIMESTAMP(start_date) AS start_date_unix, UNIX_TIMESTAMP(end_date) AS end_date_unix, is_in_trash FROM tests WHERE id='.$test_id)->queryAll();// находим тест
         if(count($test) === 0) return 'NO_SUCH_TEST_ERROR';
         $test = $test[0];
+
+        if($test['is_in_trash']) return 'TEST_IN_TRASH_ERROR';
+
+        $now = time();
+        if($test['start_date_unix'] > $now || $test['end_date_unix'] < $now) return 'WRONG_DATE_ERROR';
 
         $blocks = Yii::$app->db->createCommand('SELECT * FROM blocks WHERE test_id='.$test_id)->queryAll();// находим блоки теста
 

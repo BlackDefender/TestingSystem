@@ -23,9 +23,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.12.0/lodash.min.js',
-        'js/jquery.tablesorter.min.js',
-        'js/admin/globalVars.js',
-        'js/admin/helpers.js'
+        'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js',
+        'js/libs/jquery.tablesorter.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

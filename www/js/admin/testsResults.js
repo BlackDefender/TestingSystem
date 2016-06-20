@@ -65,7 +65,6 @@ jQuery(function($){
 
             $.get(globalVars.baseUrl+'tests/get-questions',{'test_id': testId})
                 .done(function(data){
-                    console.log('inside');
                     var questions = JSON.parse(data);
                     $('.test-results-question > span').each(function(index){
                         var content = (questions[index]['name'] === '') ? '' : '<div>'+questions[index]['name']+'</div>';
@@ -165,13 +164,13 @@ jQuery(function($){
             var fileName = testCategory+' - '+testName+' '+timeStamp+'.xls';
 
             // Set data on blob.
-            blob = new Blob( [ data ]);
-
+            blob = new Blob( [ data ] );
             // Set view.
             if ( blob ) {
+            console.log('blob', blob);
                 // Read blob.
                 url = window.URL.createObjectURL( blob );
-
+            console.log('url', url);
                 // Create link.
                 a = document.createElement( "a" );
                 // Set link on DOM.
@@ -183,6 +182,7 @@ jQuery(function($){
                 // Set file name on link.
                 a.download = fileName;
 
+            console.log('a', a);
                 // Trigger click of link.
                 a.click();
 

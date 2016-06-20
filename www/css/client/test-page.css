@@ -1,0 +1,205 @@
+/*************************************** СТИЛИ СТРАНИЦЫ ТЕСТОВ **************************************/
+.test-name {
+    font-size: 21px;
+    color: #34495e;
+    text-shadow: 2px 2px 4px grey;
+    font-weight: bold;
+    padding: 0 0 0 50px;
+    border-bottom: 2px solid #34495e;
+    line-height: 30px;
+    margin: 4px 0 10px
+ }
+form h1 {
+    margin: 20px 0 20px;
+}
+
+.blocksCount{
+  position:relative;
+  margin:0 auto;
+  background-color: lightgoldenrodyellow;
+  padding-left: 5px;
+  border-radius: 5px;
+  /*box-shadow: 2px 2px 2px 0 #FFA;*/
+}
+
+.blocksCount {
+  width:130px;
+  height:40px;
+  font-size: 1.4em;
+  font-weight:bold;
+  line-height: 40px;
+}
+
+.chapter, .info {
+  /**line-height: 150%;
+  font-size: 1.7em;*/
+}
+.info {
+  text-align: center;
+  padding-top: 2%;
+}
+.info input {
+    width: 80%;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.info li:first-child {
+  padding-top: 0px;
+  font-weight: bold;
+  line-height: 2em;
+  font-size: 1.2em;
+  border-bottom: 2px solid #34495e;
+}
+.info li:last-child {
+  padding-bottom: 4%;
+}
+.info li label {
+  font-size: 0.8em;
+}
+.icon {
+  border: 2px solid #34495e;
+  border-radius: 10px;
+  width: 50%;
+  margin: auto;
+  background: white;
+}
+.icon:hover {
+  box-shadow: 4px 4px 8px grey;
+}
+.icon img {
+  margin:-5px 0 0 -10px;;
+}
+
+input {
+  width: 90%;
+  font-size: 1.5em;
+}
+
+.chapter .topic{
+  color: #34495e;
+  font-weight: bold;
+  font-size: 0.9em;
+  padding: 2% 2% 2% 5%;
+}
+legend {
+  font-weight: bold;
+}
+
+.question li {
+  padding: 0 0 1% 5%;
+}
+.question li:first-child {
+  padding-top: 2%;
+}
+.question li:last-child {
+  padding-bottom: 2%;
+}
+
+/* Оформление radio, checkbox */
+.checkbox, .radio {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 5px;
+    cursor: pointer;
+    font-weight: 400;
+    padding-left: 22px;
+}
+.checkbox:before, .radio:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    background: lightgrey;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    border: 1px solid #222;
+}
+.radio:before {
+    border-radius: 50%;
+}
+.checkbox:before {
+    border-radius: 20%;
+}
+
+input[type="radio"],
+input[type="checkbox"]{
+    display: none;
+}
+
+input[type="radio"]:checked + label:after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 5px;
+    width: 8px;
+    height: 8px;
+    background: #34495e;
+    border-radius: 50%;
+}
+input[type="checkbox"]:checked + label:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 20px;
+    height: 7px;
+    border-bottom: 3px solid #34495e;
+    border-left: 4px solid #34495e;
+    transform: rotate(-47deg);
+}
+
+
+fieldset > div {
+    border: 1px solid #34495e;
+    padding:0 0 10px 15px;
+    margin-bottom: 10px;
+    box-shadow: 5px 5px 5px 0px grey;
+}
+fieldset img {
+    width: 100px;
+}
+.buttons {
+    text-align:center;
+}
+#test-prev-block-btn{
+    display:none;
+}
+.button {
+    border-radius: 10px;
+    height: 55px;
+    width: 130px;
+    font-size: 0.9em;
+    color: white;
+    background: #34495e;
+    box-shadow: 5px 5px 0 #355;
+    position: relative;
+    top: 0px;
+    margin:0 20px 30px auto;
+}
+.button:focus {
+    outline: none;
+}
+.button:hover {
+    background: #344;
+}
+.button:active {
+    top: 4px;
+    left: 4px;
+    box-shadow: 0 0 0 #0000FF;
+}
+
+@media all and (min-width: 1024px){
+
+    .info{
+        width: 35%;
+        float: left;
+    }
+    .chapter{
+        width: 65%;
+        float: right;
+    }
+
+}

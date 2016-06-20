@@ -1,5 +1,4 @@
 <?php
-
 /* @var $this \yii\web\View */
 /* @var $content string */
 
@@ -14,63 +13,29 @@ AppAsset::register($this);
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
-<head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?= Html::csrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-</head>
-<body>
-<?php $this->beginBody() ?>
+    <head>
+        <meta charset="<?= Yii::$app->charset ?>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?= Html::csrfMetaTags() ?>
+        <title><?= Html::encode($this->title) ?></title>
+        <link href="image/dataart16x16.png" rel="shortcut icon" type="image/png">
 
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'Main',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
-    ]);
-    NavBar::end();
-    ?>
+        <?php $this->head() ?>
+    </head>
+    <body style="background: gray">
+        <?php $this->beginBody() ?>
 
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= $content ?>
-    </div>
-</div>
-
-<footer class="footer">
-    <div class="container">
-        <p style="text-align: center;"><img src="img/favicon-16x16.png"> Synergy Inc.<!--<?= date('Y') ?>--></p>
-    </div>
-</footer>
-
-<?php $this->endBody() ?>
-</body>
+        <div class="wrap">
+            <header>
+                <a id="header-logo" href="/"></a>
+                <a id="header-mail" href="mailto:info@dataart.com"></a>
+            </header>
+            <?= $content ?>
+            <footer>
+                <img src="img/image/synergy_inc_blue.png" alt="Логотип Синергия">
+            </footer>
+        </div>
+        <?php $this->endBody() ?>
+    </body>
 </html>
 <?php $this->endPage() ?>

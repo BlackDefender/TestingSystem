@@ -129,11 +129,13 @@
 
 
             function loadPoints(){
-                var dataJSON = localStorage.getItem('geoPoints');
-                var data = JSON.parse(dataJSON);
-                data.forEach(function(point){
-                    addPoint(point['name'], point['latlng'], point['isFavorite']);
-                });
+                if(localStorage.getItem('geoPoints')){
+                    var dataJSON = localStorage.getItem('geoPoints');
+                    var data = JSON.parse(dataJSON);
+                    data.forEach(function(point){
+                        addPoint(point['name'], point['latlng'], point['isFavorite']);
+                    });
+                }
             }
             function savePoints(){
                 var data = [];

@@ -137,6 +137,7 @@ jQuery(function($){
                 })
                 .fail(function(arg){
                     helpers.changesResultAnimation($target, false);
+                    //console.log('fail', arg);
                 });
         },
         renameRollBack: function($target){

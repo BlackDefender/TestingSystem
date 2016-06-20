@@ -1,0 +1,91 @@
+/*#21AB21 green*/
+/*#34495e blue*/
+
+/************************************************ ОБЩИЕ СТИЛИ *******************************************/
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    min-width:480px;
+    height: 100%;
+    font-family: "Open Sans", sans-serif;
+}
+
+li{
+    list-style-type: none;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+    outline: none;
+}
+
+.wrap{
+    margin: 0 10px;
+    background: lightyellow;
+}
+
+#workplace{
+    padding: 20px;
+}
+
+header {
+    background-color: #34495e;
+}
+#header-logo{
+    background-image: url(../../img/header-logo.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display:inline-block;
+    width: 201px;
+    height: 48px;
+    margin: 10px 20px;
+    transition-duration: 1s;
+}
+#header-logo:hover{
+  transform:scale(1.05);
+}
+#header-mail{
+    display: none;
+}
+
+footer {
+    background-color: #34495e;
+    text-align:center;
+}
+
+footer img {
+    margin: 12px 0;
+    width: 100px;
+}
+
+@media all and (min-width: 768px){
+    .wrap{
+        margin: 0 20px;
+    }
+    #header-mail{
+        display: block;
+        margin: 20px 20px 0 0;
+        height: 24px;
+        width: 250px;
+        background-image: url(../../img/header-mail.png);
+        background-repeat: no-repeat;
+        background-position: top;
+        float: right;
+    }
+    #header-mail:hover{
+        background-position: bottom;
+    }
+}
+
+@media all and (min-width: 1024px){
+    .wrap{
+        width: 980px;
+        margin: auto;
+    }
+}

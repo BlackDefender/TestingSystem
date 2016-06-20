@@ -1,0 +1,41 @@
+/************************************************ СТИЛИ ГЛАВНОЙ СТРАНИЦЫ ***************************************/
+.tests-list-header {
+    font-size: 21px;
+    color: #34495e;
+    text-shadow: 2px 2px 4px grey;
+    font-weight: bold;
+    margin: 0 0 10px 25px;
+ }
+.tests-list{
+    width: 100%;
+    margin: 0 0 40px;
+}
+.tests-list tr{
+    border-bottom: 1px solid grey;
+}
+
+.tests-list th,
+.tests-list td{
+    padding: 9px;
+    font-size: 13px;
+}
+
+.tests-list tr td:nth-of-type(n+2),
+.tests-list tr th:nth-of-type(n+2)
+{
+    text-align: center;
+}
+.tests-list th{
+    background: #b9c9fe;
+    font-weight: bold;
+    color: grey;
+}
+.tests-list tbody tr:hover td{
+    position: relative;
+    z-index: 1;
+    background: #e8edff;
+    box-shadow: 3px 2px 3px 0px grey;
+}
+.tests-list tbody tr{
+    cursor: pointer;
+}

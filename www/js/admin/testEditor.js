@@ -17,7 +17,7 @@ jQuery(function($){
                             helpers.alert('Ошибка', 'Не удалось обработать полученные данные');
                             return ;
                         }
-                        console.log(data);
+                        //console.log(data);
                         addTest(true);
                         itIsNewTest = false;
                         oldTestId = id;
