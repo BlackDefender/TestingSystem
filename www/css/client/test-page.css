@@ -162,6 +162,7 @@ fieldset > div {
     font-size: 16px;
     line-height: 24px;
     white-space: pre-wrap;
+    padding: 0 15px 0 0;
 }
 fieldset img {
     width: 100px;

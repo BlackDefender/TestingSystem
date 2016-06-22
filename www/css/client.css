@@ -34,10 +34,8 @@
     font-size: 1em;
     background: #34495e;
     box-shadow: 5px 5px 0 #355;
-    margin-top: -60px;
     color: white;
     vertical-align: text-top;
-    line-height: 2;
 }
 .button1:focus {
   outline: none;
