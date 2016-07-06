@@ -1,5 +1,5 @@
 jQuery(function($){
-
+    
 //////// НАЧАЛЬНАЯ СТРАНИЦА
     var indexPage = (function(){
         function show(){
