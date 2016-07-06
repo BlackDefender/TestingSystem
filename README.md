@@ -41,6 +41,8 @@ Set cookie validation key in `config/web.php` file to some random secret string:
 ],
 ```
 
+For creating database structure use file DB.sql
+
 You can then access the application through the following URL:
 
 ~~~
